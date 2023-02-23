@@ -6,6 +6,113 @@ using namespace std;
 #define MAX 151
 #define INF 987654321
 
+int targetAlp, targetCop;
+int check[MAX][MAX];
+vector<vector<int>> allProblems;
+
+void Init()
+{
+	for (int a = 0; a < MAX; ++a)
+	{
+		for (int b = 0; b < MAX; ++b)
+			check[a][b] = INF;
+	}
+	
+	targetAlp = -1;
+	targetCop = -1;
+	allProblems.clear();
+}
+
+int Smaller(int a, int b)
+{
+	return a < b ? a : b;
+}
+
+int Check(int alp, int cop)
+{
+	if (alp >= targetAlp && cop >= targetCop)
+		return 0;
+
+	if (check[alp][cop] < INF)
+		return check[alp][cop];
+
+	int& result = check[alp][cop];
+
+	// 알고리즘 공부
+	if (alp < targetAlp)
+	{
+		int alResult = Check(alp + 1, cop) + 1;
+
+		result = Smaller(result, alResult);
+	}
+
+	// 코딩 공부
+	if (cop < targetCop)
+	{
+		int coResult = Check(alp, cop + 1) + 1;
+
+		result = Smaller(result, coResult);
+	}
+
+	// 문제 풀기
+	for (int i = 0; i < allProblems.size(); ++i)
+	{
+		vector<int> problem = allProblems[i];
+
+		int alpReq = problem[0];
+		int copReq = problem[1];
+		int alpReward = problem[2];
+		int copReward = problem[3];
+		int timeCost = problem[4];
+
+		if (alp >= alpReq && cop >= copReq)
+		{
+			int levelupAlp = alp + alpReward >= targetAlp ? targetAlp : alp + alpReward;
+			int levelupCop = cop + copReward >= targetCop ? targetCop : cop + copReward;
+			int problemResult = Check(levelupAlp, levelupCop) + timeCost;
+
+			result = Smaller(result, problemResult);
+		}
+	}
+
+	return result;
+}
+
+int solution(int alp, int cop, vector<vector<int>> problems)
+{
+	for (int a = 0; a < MAX; ++a)
+	{
+		for (int b = 0; b < MAX; ++b)
+			check[a][b] = INF;
+	}
+
+	for (int i = 0; i < problems.size(); ++i)
+	{	
+		// alp 요구치, cop 요구치, alp 보상, cop 보상, 걸리는 시간
+		vector<int> problem = problems[i];
+
+		allProblems.push_back(problem);
+
+		int alpReq = problem[0];
+		int copReq = problem[1];
+
+		if (targetAlp < alpReq)
+			targetAlp = alpReq;
+		
+		if (targetCop < copReq)
+			targetCop = copReq;
+	}
+
+	int answer = Check(alp, cop);
+
+	return answer;
+}
+
+
+/*
+#define MAX 151
+#define INF 987654321
+
 int reqAlp, reqCop;
 int record[MAX][MAX];
 vector<vector<int>> problemss;
@@ -92,7 +199,7 @@ int solution(int alp, int cop, vector<vector<int>> problems)
 
     return answer;
 }
-
+*/
 /*
 #define MAX 151
 #define INF 987654321
