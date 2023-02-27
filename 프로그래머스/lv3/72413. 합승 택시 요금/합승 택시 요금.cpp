@@ -4,7 +4,7 @@
 using namespace std;
 
 #define MAX 201
-#define INF 5000000
+#define INF 5000000 // 이 값을 꽤 크게 주는 게 중요하다고 생각한다
 
 int costs[MAX][MAX];
 
@@ -53,64 +53,3 @@ int solution(int n, int s, int a, int b, vector<vector<int>> fares)
     return answer;
 }
 
-/*
-#define SIZE 3
-#define MAX 201
-#define INF 500000
-
-int Min(int a, int b)
-{
-	if (a < b)
-		return a;
-	return b;
-}
-
-int solution(int n, int s, int a, int b, vector<vector<int>> fares)
-{
-	int dist[MAX][MAX];
-
-	for (int from = 1; from <= n; ++from)
-	{
-		for (int to = 1; to <= n; ++to)
-		{
-			if (from == to)
-				dist[from][to] = 0;
-			else
-				dist[from][to] = INF;
-		}
-	}
-
-	for (int i = 0; i < fares.size(); ++i)
-	{
-		int node1 = fares[i][0];
-		int node2 = fares[i][1];
-		int fare = fares[i][2];
-
-		dist[node1][node2] = fare;
-		dist[node2][node1] = fare;
-	}
-
-	for (int mid = 1; mid <= n; ++mid)
-	{
-		for (int from = 1; from <= n; ++from)
-		{
-			for (int to = 1; to <= n; ++to)
-			{
-				if (dist[from][to] > dist[from][mid] + dist[mid][to])
-					dist[from][to] = dist[from][mid] + dist[mid][to];
-			}
-		}
-	}
-
-	int minVal = Min(dist[s][a] + dist[a][b], dist[s][b] + dist[b][a]);
-
-	for (int mid = 1; mid <= n; ++mid)
-	{
-		int curFare = dist[s][mid] + dist[mid][a] + dist[mid][b];
-
-		minVal = Min(minVal, curFare);
-	}
-
-	return minVal;
-}
-*/
