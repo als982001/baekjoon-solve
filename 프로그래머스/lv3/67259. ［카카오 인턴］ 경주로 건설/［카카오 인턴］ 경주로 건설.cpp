@@ -12,16 +12,20 @@ using namespace std;
 #define STRAIGHT 100
 #define CORNER 500
 
-int N;
-int minCost[MAX][MAX][4];
-int nr[4] = { 1, 0, -1, 0 };
-int nc[4] = { 0, -1, 0, 1 };
+int N;  // board의 한 변의 길이
+int minCost[MAX][MAX][4];   // 각 지점의 방향에 따른 최소 비용
 
+// 다음 방향을 위한 변수들. 순서대로 아래쪽, 왼쪽, 윗쪽, 오른쪽
+int nr[4] = { 1, 0, -1, 0 };    
+int nc[4] = { 0, -1, 0, 1 };  
+
+// 현재 위치가 범위 안에 있는지를 반환
 bool IsIn(int r, int c)
 {
 	return 0 <= r && r < N && 0 <= c && c < N;
 }
 
+// 두 개의 방향이 서로 반대 방향인지 (180도 회전하여 뒤로 돌아있는지)
 bool TurnBack(int dir1, int dir2)
 {
 	// 0이랑 2는 서로 위아래 방향이라 뒤를 도는 방향
@@ -33,6 +37,7 @@ bool TurnBack(int dir1, int dir2)
 		return false;
 }
 
+// 두 개의 방향이 서로 직각인지 (회전을 했는지))
 bool Turn(int dir1, int dir2)
 {
 	// 뒤를 도는 경우
@@ -47,22 +52,28 @@ bool Turn(int dir1, int dir2)
 	return true;
 }
 
+// 방향에 따른 추가 비용
 int Cost(int dir1, int dir2)
-{
+{   
+    // 만약 회전을 한다면 직선 도로 비용 + 코너 비용
 	if (Turn(dir1, dir2))
 		return STRAIGHT + CORNER;
-	else
+	else    // 아니라면 직선 비용만
 		return STRAIGHT;
 }	
 
+// 최소 비용을 찾기 위한 함수
 int Search(vector<vector<int>> board)
 {
 	int answer = INF;
-
+        
+    // 큐에는 순서대로 r좌표, c좌표, 현재 방향, 현재 비용이 저장된다.
 	queue<pair<pair<int, int>, pair<int, int>>> q;
 	for (int dir = 0; dir < 4; ++dir)
 		minCost[0][0][dir] = 0;
-
+    
+    // (0, 0)에서는 (1, 0), (0, 1)로 진행할 수 있으므로
+    // 나아갈 수 있다면 진행한다.
 	if (board[1][0] == 0)
 	{
 		q.push({ { 1, 0 }, { 0, STRAIGHT } });
@@ -82,26 +93,32 @@ int Search(vector<vector<int>> board)
 		int curDir = q.front().second.first;
 		int curCost = q.front().second.second;
 		q.pop();
-
+        
+        // 만약 도착점이라면, 비용을 비교하여 비용 저장
 		if (curR == N - 1 && curC == N - 1)
 		{
 			if (answer > curCost)
 				answer = curCost;
+                    
+            continue;   // 이 곳에서는 더 진행할 필요 없음
 		}
-
+        
+        // 다음 방향을 반복문을 이용해 진행
 		for (int nxtDir = 0; nxtDir < 4; ++nxtDir)
-		{
+		{   
+            // 만약 현재 방향에서 180도 회전한 방향이라면, 그냥 패스
 			if (TurnBack(curDir, nxtDir))
 				continue;
 				
 			int nxtR = curR + nr[nxtDir];
 			int nxtC = curC + nc[nxtDir];
 			int nxtCost = curCost + Cost(curDir, nxtDir);
-
+    
 			if (IsIn(nxtR, nxtC))
 			{
 				if (minCost[nxtR][nxtC][nxtDir] >= nxtCost && board[nxtR][nxtC] == 0)
 				{
+                    // 범위 안에 있으면서 방향에 따른 최소 금액이 맞다면 진행
 					minCost[nxtR][nxtC][nxtDir] = nxtCost;
 					q.push({ { nxtR, nxtC }, { nxtDir, nxtCost }});
 				}
@@ -114,11 +131,12 @@ int Search(vector<vector<int>> board)
 
 int solution(vector<vector<int>> board)
 {
+    // 비교의 편의를 위해서, 모든 지점에서 모든 방향에서의 비용을 가능한 크게 설정.
 	for (int r = 0; r < MAX; ++r)
 	{
 		for (int c = 0; c < MAX; ++c)
 		{
-			minCost[r][c][0]= INF;
+			minCost[r][c][0] = INF;
 			minCost[r][c][1] = INF;
 			minCost[r][c][2] = INF;
 			minCost[r][c][3] = INF;
@@ -131,235 +149,3 @@ int solution(vector<vector<int>> board)
 	
 	return answer;
 }
-
-/*
-#include <string>
-#include <vector>
-#include <queue>
-#include <memory.h>
-using namespace std;
-
-#define MAX 30
-#define INF 2e9
-
-int R, C;
-int nr[4] = { 1, -1, 0, 0 };
-int nc[4] = { 0, 0, 1, -1 };
-int costs[MAX][MAX][4];
-
-bool Is_In(int r, int c)
-{
-    return 0 <= r && r <= R && 0 <= c && c <= C;
-}
-
-int Min(int a, int b)
-{
-    return a < b ? a : b;
-}
-
-int solution(vector<vector<int>> board)
-{
-    int answer = INF;
-
-    R = board.size() - 1;
-    C = board.size() - 1;
-
-    for (int r = 0; r <= R; ++r)
-    {
-        for (int c = 0; c <= C; ++c)
-        {
-            for (int i = 0; i < 4; ++i)
-                costs[r][c][i] = INF;
-
-        }
-    }
-
-    queue<pair<pair<int, int>, pair<int, int>>> q;
-    q.push(make_pair(make_pair(0, 0), make_pair(0, -1)));
-    
-
-    for (int i = 0; i < 4; ++i)
-        costs[0][0][i] = 0;
-    
-    while (!q.empty())
-    {
-        int curR = q.front().first.first;
-        int curC = q.front().first.second;
-        int curCost = q.front().second.first;
-        int befDir = q.front().second.second;
-        q.pop();
-
-        if (curR == R && curC == C)
-        {
-            answer = Min(answer, costs[curR][curC][befDir]);
-            continue;
-        }
-
-        for (int i = 0; i < 4; ++i)
-        {
-            int nxtR = curR + nr[i];
-            int nxtC = curC + nc[i];
-
-            if (Is_In(nxtR, nxtC) && board[nxtR][nxtC] == 0)
-            {
-                int newCost = 0;
-
-                if (befDir == -1 || i == befDir)
-                    newCost = curCost + 100;
-                else
-                    newCost = curCost + 600;
-
-                if (costs[nxtR][nxtC][i] >= newCost)
-                {
-                    costs[nxtR][nxtC][i] = newCost;
-                    q.push(make_pair(make_pair(nxtR, nxtC), make_pair(newCost, i)));
-                }
-            }
-        }
-    }
-
-    return answer;
-}
-*/
-/*
-#include <iostream>
-#include <string>
-#include <vector>
-#include <algorithm>
-#include <queue>
-#include <map>
-#include <memory.h>
-#include <deque>
-#include <cmath>
-#include <stack>
-#include <cstring>
-#include <typeinfo>
-
-#define MAX 26
-#define INF 987654321
-int check[MAX][MAX][4];
-
-using namespace std;
-
-int nr[4] = { 1, -1, 0, 0 };
-int nc[4] = { 0, 0, 1, -1 };
-
-bool Is_In(int r, int c, int N)
-{
-	return 0 <= r && r <= N && 0 <= c && c <= N;
-}
-
-bool Is_Back(int curDir, int nxtDir)
-{
-	switch (curDir)
-	{
-	case 0:
-		if (nxtDir == 1)
-			return true;
-		else
-			return false;
-		break;
-	case 1:
-		if (nxtDir == 0)
-			return true;
-		else
-			return false;
-		break;
-	case 2:
-		if (nxtDir == 3)
-			return true;
-		else
-			return false;
-		break;
-	case 3:
-		if (nxtDir == 2)
-			return true;
-		else
-			return false;
-		break;
-	}
-    
-    return true;
-}
-
-bool Is_Turn(int curDir, int nxtDir)
-{
-	switch (curDir)
-	{
-	case 0:
-	case 1:
-		if (nxtDir == 2 || nxtDir == 3)
-			return true;
-		else
-			return false;
-		break;
-	case 2:
-	case 3:
-		if (nxtDir == 0 || nxtDir == 1)
-			return true;
-		else
-			return false;
-		break;
-	}
-    
-    return true;
-}
-
-int solution(vector<vector<int>> board)
-{
-	int answer = INF;
-
-	int end = board.size() - 1;
-
-	queue<pair<pair<int, int>, pair<int, int>>> q;
-	q.push({ {0, 0}, {0, 0} });
-	q.push({ {0, 0}, {0, 2} });
-	
-	check[0][0][0] = 1;
-	check[0][0][2] = 1;
-
-	while (!q.empty())
-	{
-		int curR = q.front().first.first;
-		int curC = q.front().first.second;
-		int curCost = q.front().second.first;
-		int curDir = q.front().second.second;
-		q.pop();
-
-		if (curR == end && curC == end)
-		{
-			if (answer > curCost)
-				answer = curCost;
-		}
-
-		for (int i = 0; i < 4; ++i)
-		{
-			int nxtR = curR + nr[i];
-			int nxtC = curC + nc[i];
-			int nxtDir = i;
-
-			if (Is_Back(curDir, nxtDir))
-				continue;
-
-			if (!Is_In(nxtR, nxtC, end))
-				continue;
-
-			if (board[nxtR][nxtC] == 1)
-				continue;
-
-			int nxtCost = curCost + 100;
-			if (Is_Turn(curDir, nxtDir))
-				nxtCost += 500;
-			
-			if (check[nxtR][nxtC][nxtDir] == 0 ||
-				check[nxtR][nxtC][nxtDir] > nxtCost)
-			{
-				check[nxtR][nxtC][nxtDir] = nxtCost;
-				q.push({ { nxtR, nxtC }, { nxtCost, nxtDir } });
-			}
-		}
-	}
-
-	return answer;
-}
-*/
