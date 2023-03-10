@@ -3,8 +3,6 @@
 #include <algorithm>
 using namespace std;
 
-#define CASE 6
-
 #define HOUR 60
 #define MAX 10
 
@@ -12,6 +10,7 @@ int lastBusTime = 0;
 vector<vector<int>> buses;
 vector<int> crewTimes;
 
+// "09:10"과 같은 string형의 시간을 int형 값으로 바꾼다.
 int IntTime(string time)
 {
 	int hour = stoi(time.substr(0, 2));
@@ -20,6 +19,7 @@ int IntTime(string time)
 	return hour * HOUR + minute;
 }
 
+// 5410과 같은 int형의 시간을 string형 값으로 바꾼다.
 string StringTime(int time)
 {
 	string strHour = "0";
@@ -41,12 +41,9 @@ string StringTime(int time)
 	return strHour + ":" + strMinute;
 }
 
-
 string solution(int n, int t, int m, vector<string> timetable)
 {
 	lastBusTime = 0;
-	buses.clear();
-	crewTimes.clear();
 
 	// 1. 주어진 timetable의 값들을 전부 int형 값으로 바꾼다.
 	for (int i = 0; i < timetable.size(); ++i)
@@ -91,232 +88,9 @@ string solution(int n, int t, int m, vector<string> timetable)
 	if (buses[n - 1].size() < m)
 		return StringTime(lastBusTime);
 
-	int lastCrewTime = buses[n - 1].back();
-    
-   	return StringTime(lastCrewTime - 1);
+	// 6. 위의 상황들에도 해당되지 않는다면,
+	// 가장 마지막에 도착한 크루의 시간보다 1분 빠르게 오면 된다.
+	int lastCrewTime = buses[n - 1].back();	// 마지막 버스의 마지막 크루의 도착 시간
 
-	for (int i = buses[n - 1].size() - 1; i >= 0; --i)
-	{
-		if (buses[n - 1][i] < lastCrewTime)	
-			return StringTime(buses[n - 1][i]);
-	}
-
-	return StringTime(lastCrewTime - 1);
+	return StringTime(lastCrewTime - 1);	// 마지막 사람보다 1분 일찍
 }
-
-/*
-#define CASE 6
-
-#define MAX 12
-#define HOUR 60
-
-string NumToStr(int time)
-{
-    int hour = time / HOUR;
-    int minute = time % HOUR;
-
-    string strHour = to_string(hour);
-    if (hour < 10)
-        strHour = "0" + strHour;
-    
-    string strMinute = to_string(minute);
-    if (minute < 10)
-        strMinute = "0" + strMinute;
-
-    return (strHour + ":" + strMinute);
-}
-
-int StrToNum(string time)
-{
-    string strHour = time.substr(0, 2);
-    string strMinute = time.substr(3, 2);
-
-    int hour = stoi(strHour);
-    int minute = stoi(strMinute);
-
-    return hour * HOUR + minute;
-}
-
-// n: 셔틀 운행 횟수, t: 셔틀 운행 간격, m: 셔틀에 탈 수 있는 최대 크루 수
-string solution(int n, int t, int m, vector<string> timetable)
-{
-    string answer = "";
-
-    vector<vector<int>> buses;
-    vector<int> crewTimetable;
-    int startTime = StrToNum("09:00");
-    int crewIdx = 0;
-
-    for (int t = 0; t < timetable.size(); ++t)
-    {
-        string strCurCrew = timetable[t];
-        int curCrew = StrToNum(strCurCrew);
-
-        crewTimetable.push_back(curCrew);
-    }
-
-    sort(crewTimetable.begin(), crewTimetable.end());
-
-    for (int busIdx = 0; busIdx < n; ++busIdx)
-    {
-        vector<int> bus;
-        int busStartTime = startTime + (t * busIdx);
-
-        while (true)
-        {
-            int curCrew = crewTimetable[crewIdx];
-            if (curCrew <= busStartTime)
-            {
-                bus.push_back(curCrew);
-                ++crewIdx;
-            }
-            else
-                break;
-
-            if (bus.size() >= m)
-                break;
-        }
-
-        buses.push_back(bus);
-    }
-
-    vector<int> lastBus = buses.back();
-    int lastBusTime = startTime + (t * (n - 1));
-
-    if (lastBus.size() < m)
-        answer = NumToStr(lastBusTime);
-    else
-    {
-        int lastCrew = lastBus.back();
-        int answerTime = lastCrew - 1;
-
-        answer = NumToStr(answerTime);
-    }
-    
-    return answer;
-}
-*/
-/*
-string solution(int n, int t, int m, vector<string> timetable) 
-{
-    vector<int> Crew;
-    for (int i = 0; i < timetable.size(); i++)
-    {
-        string S_Hour = "";
-        S_Hour = S_Hour + timetable[i][0];
-        S_Hour = S_Hour + timetable[i][1];
-        int Hour = stoi(S_Hour);
-        
-        string S_Minute = "";
-        S_Minute = S_Minute + timetable[i][3];
-        S_Minute = S_Minute + timetable[i][4];
-        int Minute = stoi(S_Minute);
-        
-        int Time = Hour * 60 + Minute;
-        Crew.push_back(Time);
-    }
-    sort(Crew.begin(), Crew.end());
- 
-    int Shuttle_Time = 540;
-    int Crew_Idx = 0;
-    int Answer_Time;
-    for (int i = 1; i <= n; i++, Shuttle_Time = Shuttle_Time + t)
-    {
-        int Cnt = 0;
-        for (int j = Crew_Idx; j < Crew.size(); j++)
-        {
-            if (Crew[j] <= Shuttle_Time)
-            {
-                Crew_Idx++;
-                Cnt++;
-                if (Cnt == m) break;
-            }
-        }
- 
-        if (i == n)
-        {
-            if (Cnt == m) Answer_Time = Crew[Crew_Idx - 1] - 1;
-            else Answer_Time = Shuttle_Time;
-        }
-    }
-    
-    string answer = "";
-    int Hour = Answer_Time / 60;
-    int Minute = Answer_Time % 60;
-    char A = Hour / 10 + '0';
-    char B = Hour % 10 + '0';
-    char C = Minute / 10 + '0';
-    char D = Minute % 10 + '0';
-    answer = answer + A;
-    answer = answer + B;
-    answer = answer + ':';
-    answer = answer + C;
-    answer = answer + D;
-    return answer;
-}
-
-int Time_to_Int(string time)
-{
-	string strHour = time.substr(0, 2);
-	string strMinute = time.substr(3, 2);
-
-	return stoi(strHour) * 60 + stoi(strMinute);
-}
-
-string Time_to_Str(int time)
-{
-	int hour = time / 60;
-	int minute = time % 60;
-
-	string strHour = hour < 10 ? "0" + to_string(hour) : to_string(hour);
-	string strMinute = minute < 10 ? "0" + to_string(minute) : to_string(minute);
-
-	return strHour + ":" + strMinute;
-}
-
-string solution(int n, int t, int m, vector<string> timetable)
-{
-	int answer = 0;
-
-	vector<int> tmtable;
-
-	for (auto time : timetable)
-		tmtable.push_back(Time_to_Int(time));
-
-	sort(tmtable.begin(), tmtable.end());
-
-	vector<vector<int>> buses;
-
-	int busTime = 540;
-	int lastBusTime = 0;
-	int passenger = 0;
-
-	for (int busCome = 0; busCome < n; ++busCome)
-	{
-		vector<int> bus;
-
-		while (bus.size() < m && passenger < tmtable.size())
-		{
-			if (tmtable[passenger] > busTime)
-				break;
-
-			bus.push_back(tmtable[passenger]);
-			++passenger;
-		}
-
-		buses.push_back(bus);
-		lastBusTime = busTime;
-		busTime += t;
-	}
-
-	vector<int> lastBus = buses.back();
-
-	if (lastBus.size() < m)
-		answer = lastBusTime;
-	else
-
-		answer = lastBus.back() - 1;
-
-	return Time_to_Str(answer);
-}
-*/
