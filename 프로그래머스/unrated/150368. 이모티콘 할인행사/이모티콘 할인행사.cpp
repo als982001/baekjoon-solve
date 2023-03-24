@@ -3,6 +3,93 @@
 
 using namespace std;
 
+double discountRates[4] = { 0.1, 0.2, 0.3, 0.4 };
+
+vector<vector<double>> userInfos;
+vector<double> emoticonCosts;
+double discounts[11];
+vector<int> answer;
+
+void Discount(int idx)
+{
+	if (idx >= emoticonCosts.size())
+	{
+		int memberNum = 0;
+		double totalCost = 0;
+
+		for (int u = 0; u < userInfos.size(); ++u)
+		{
+			vector<double> userInfo = userInfos[u];
+
+			double userTotalCost = 0;
+
+			for (int e = 0; e < emoticonCosts.size(); ++e)
+			{
+				double discountRate = discounts[e];
+				double emoticonCost = emoticonCosts[e] * (1 - discountRate);
+
+				if ((userInfo[0] * 0.01) <= discountRate)
+					userTotalCost += emoticonCost;
+			}
+
+			if (userInfo[1] <= userTotalCost)
+				++memberNum;
+			else
+				totalCost += userTotalCost;
+		}
+
+
+		if (answer[0] < memberNum)
+		{
+			answer[0] = memberNum;
+			answer[1] = totalCost;
+		}
+		else if (answer[0] == memberNum)
+		{
+			if (answer[1] < totalCost)
+			{
+				answer[0] = memberNum;
+				answer[1] = totalCost;
+			}
+		}
+
+		return;
+	}
+
+	for (int rateIdx = 0; rateIdx < 4; ++rateIdx)
+	{
+		discounts[idx] = discountRates[rateIdx];
+		Discount(idx + 1);
+	}
+}
+
+vector<int> solution(vector<vector<int>> users, vector<int> emoticons) 
+{
+	answer = { -1, -1 };
+
+	for (int i = 0; i < users.size(); ++i)
+	{
+		vector<double> user;
+
+		user.push_back(users[i][0]);
+		user.push_back(users[i][1]);
+
+		userInfos.push_back(user);
+	}
+
+	for (int i = 0; i < emoticons.size(); ++i)
+	{
+		double cost = emoticons[i];
+		emoticonCosts.push_back(cost);
+	}
+
+	Discount(0);
+
+	return answer;
+}
+
+
+/*
 vector<vector<int>> realUsers;
 vector<double> emoticonsCosts;
 vector<int> chosenRates;
@@ -76,3 +163,4 @@ vector<int> solution(vector<vector<int>> users, vector<int> emoticons) {
     
     return answer;
 }
+*/
