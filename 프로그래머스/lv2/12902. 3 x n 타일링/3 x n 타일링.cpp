@@ -8,6 +8,48 @@ using namespace std;
 
 long long dp[MAX];
 
+long long Check(int n)
+{
+    if (dp[n] >= 0)
+        return dp[n];
+
+    dp[n] = Check(n - 2) * dp[2];
+    dp[n] %= MOD;
+
+    for (int x = 4; x <= n; x += 2)
+    {
+        dp[n] += (Check(n - x) * 2);
+        dp[n] %= MOD;
+    }
+    
+    return dp[n];
+}
+
+int solution(int n)
+{
+    for (int x = 0; x < MAX; ++x)
+        dp[x] = -1;
+
+    if (n % 2 == 1)
+        return 0;
+
+    dp[0] = 1;
+    dp[1] = 0;
+    dp[2] = 3;
+    dp[4] = 11;
+
+    long long answer = Check(n);
+
+    return answer;
+}
+
+
+/*
+#define MAX 5001
+#define MOD 1000000007
+
+long long dp[MAX];
+
 void Check(int n)
 {
     for (int x = 6; x <= n; x += 2)
@@ -36,43 +78,5 @@ int solution(int n)
     Check(n);
 
     return dp[n];
-}
-
-
-// 처음에 했을 때 시간초과 났던 코드
-/*
-int Check(int n)
-{
-    if (dp[n] >= 0)
-        return dp[n];
-    
-    int& curDp = dp[n];
-    curDp = 0;
-
-    curDp = Check(n - 2) * dp[2];
-
-    for (int befN = n - 4; befN >= 0; befN -= 2)
-        curDp += (Check(befN) * 2);
-
-    return curDp;
-}
-
-int solution(int n) 
-{
-    for (int i = 0; i < MAX; ++i)
-        dp[i] = -1;
-
-    if (n % 2 == 1)
-        return 0;
-        
-    dp[0] = 1;
-    dp[1] = 0;
-    dp[2] = 3;
-    dp[3] = 0;
-    dp[4] = 11;
-
-    int answer = Check(n);
-
-    return answer;
 }
 */
