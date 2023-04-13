@@ -23,11 +23,6 @@ int N;
 int prices[MAX];
 int dp[MAX];
 
-int Max(int a, int b)
-{
-	return a > b ? a : b;
-}
-
 int Check(int cardNum)
 {
 	if (cardNum == 0)
@@ -38,10 +33,8 @@ int Check(int cardNum)
 	int& curDp = dp[cardNum];
 	curDp = 0;
 
-	curDp = Check(cardNum - 1) + prices[1];
-
-	for (int n = 2; n <= cardNum; ++n)
-		curDp = Max(curDp, Check(cardNum - n) + prices[n]);
+	for (int n = 1; n <= cardNum; ++n)
+		curDp = max(curDp, Check(cardNum - n) + prices[n]);
 
 	return curDp;
 }
@@ -66,4 +59,3 @@ int main()
 	
 	return 0;
 }
-
