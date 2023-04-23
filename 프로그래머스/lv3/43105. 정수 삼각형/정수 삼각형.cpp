@@ -3,6 +3,42 @@
 
 using namespace std;
 
+#define MAX 501
+
+int dp[MAX][MAX];
+
+int solution(vector<vector<int>> triangle) {
+    int answer = 0;
+    
+    for (int a = 0; a < MAX; ++a)
+    {
+        for (int b = 0; b < MAX; ++b)
+            dp[a][b] = -1;
+    }
+    
+    dp[0][0] = triangle[0][0];
+    
+    for (int row = 1; row < triangle.size(); ++row)
+    {
+        dp[row][0] = triangle[row][0] + dp[row - 1][0];
+        dp[row][row] = triangle[row][row] + dp[row - 1][row - 1];
+        
+        for (int col = 1; col < row; ++col)
+            dp[row][col] = triangle[row][col] + max(dp[row - 1][col - 1], dp[row - 1][col]);
+    }
+    
+    for (int col = 0; col < triangle.size(); ++col)
+        answer = max(answer, dp[triangle.size() - 1][col]);
+    
+    return answer;
+}
+
+/*
+#include <string>
+#include <vector>
+
+using namespace std;
+
 #define MAX 501			// 높이의 최댓값이 500이므로 MAX를 501로 설정(0 ~ 500)
 
 int maxR, maxC;			// maxR: 삼각형의 높이, maxC: 삼각형의 밑변의 길이
@@ -73,3 +109,4 @@ int solution(vector<vector<int>> triangle) {
 
     return answer;
 }
+*/
