@@ -57,15 +57,15 @@ int Check(int nodeNum)
     return maxDistNum;
 }
 
-int solution(int n, vector<vector<int>> edge) 
+int solution(int n, vector<vector<int>> vertex) 
 {
     for (int i = 0; i < MAX; ++i)
         dist[i] = MAX + MAX + MAX;
 
-    for (int i = 0; i < edge.size(); ++i)
+    for (int i = 0; i < vertex.size(); ++i)
     {
-        int nodeA = edge[i][0];
-        int nodeB = edge[i][1];
+        int nodeA = vertex[i][0];
+        int nodeB = vertex[i][1];
 
         links[nodeA].push_back(nodeB);
         links[nodeB].push_back(nodeA);
