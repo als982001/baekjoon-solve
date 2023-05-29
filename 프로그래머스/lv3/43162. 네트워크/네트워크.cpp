@@ -1,5 +1,57 @@
 #include <string>
 #include <vector>
+#define MAX 201
+
+using namespace std;
+
+bool checked[MAX];
+vector<int> links[MAX];
+
+void Check(int node)
+{
+    for (int i = 0; i < links[node].size(); ++i)
+    {
+        int linkedNode = links[node][i];
+        
+        if (!checked[linkedNode])
+        {
+            checked[linkedNode] = true;
+            Check(linkedNode);
+        }
+    }
+}
+
+int solution(int n, vector<vector<int>> computers) {
+    int answer = 0;
+        
+    for (int nodeA = 0; nodeA < n; ++nodeA)
+    {
+        for (int nodeB = 0; nodeB < n; ++nodeB)
+        {
+            if (nodeA == nodeB)
+                continue;
+            
+            if (computers[nodeA][nodeB] == 1)
+                links[nodeA].push_back(nodeB);
+        }
+    }
+    
+    for (int node = 0; node < n; ++node)
+    {
+        if (checked[node] == false)
+        {
+            ++answer;
+            Check(node);
+        }
+    }
+    
+    
+    return answer;
+}
+
+/*
+#include <string>
+#include <vector>
 #include <queue>
 using namespace std;
 
@@ -82,3 +134,4 @@ int solution(int n, vector<vector<int>> computers)
 
 	return networkNum;
 }
+*/
