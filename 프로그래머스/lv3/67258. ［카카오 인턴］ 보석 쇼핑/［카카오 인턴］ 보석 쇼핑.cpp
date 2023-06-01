@@ -1,5 +1,93 @@
 #include <string>
 #include <vector>
+#include <map>
+
+using namespace std;
+
+int numberOfTypes = 0;
+vector<string> gemTypes;
+map<string, int> numberOfGem;
+
+vector<int> solution(vector<string> gems) {
+    vector<int> answer;
+    
+    for (int i = 0; i < gems.size(); ++i)
+    {
+        string gem = gems[i];
+        
+        if (numberOfGem[gem] == 0)
+        {
+            gemTypes.push_back(gem);
+            ++numberOfTypes;
+        }
+        
+        ++numberOfGem[gem];
+    }
+    
+    int start = 0;
+    int end = 0;
+    int currentNumberOfTypes = 0;
+    map<string, int> currentNumberOfGem;
+    
+    while(currentNumberOfTypes < numberOfTypes)
+    {
+        string gem = gems[end];
+        
+        if (currentNumberOfGem[gem] == 0)
+            ++currentNumberOfTypes;
+        ++currentNumberOfGem[gem];
+
+        ++end;
+    }
+    --end;
+    
+    answer.push_back(start);
+    answer.push_back(end);
+    
+    while(end < gems.size())
+    {
+        string removedGem = gems[start];
+        ++start;
+        --currentNumberOfGem[removedGem];
+        
+        if (currentNumberOfGem[removedGem] == 0)
+        {
+            --currentNumberOfTypes;
+            ++end;
+            
+            while(end < gems.size() && currentNumberOfTypes < numberOfTypes)
+            {
+                string newGem = gems[end];
+                
+                if (currentNumberOfGem[newGem] == 0)
+                    ++currentNumberOfTypes;
+                ++currentNumberOfGem[newGem];
+                
+                ++end;
+            }
+            
+            if (currentNumberOfTypes < numberOfTypes)
+                break;
+            else
+                --end;
+        }
+        else
+        {
+            if (answer[1] - answer[0] > end - start)
+            {
+                answer[0] = start;
+                answer[1] = end;
+            }
+        }
+    
+    }
+    
+    return { answer[0] + 1, answer[1] + 1 };
+}
+
+/*
+#include <string>
+#include <vector>
 #include <algorithm>
 #include <map>
 using namespace std;
@@ -102,91 +190,6 @@ vector<int> solution(vector<string> gems)
 	}
 
 	// 4. 답을 반환한다.
-	return answer;
-}
-
-
-/*
-vector<int> solution(vector<string> gems)
-{
-	vector<int> answer;
-
-	int totalGem = 0;
-	map<string, int> gemsNum;
-
-	for (int i = 0; i < gems.size(); ++i)
-	{
-		string gem = gems[i];
-
-		if (gemsNum[gem] == 0)
-		{
-			gemsNum[gem] = 1;
-			++totalGem;
-		}
-		else
-			++gemsNum[gem];
-	}
-
-	int curTotalGem = 0;
-	int minLen = 987654321;
-	int start = 0, end = 0;
-	map<string, int> curGemsNum;
-
-	for (; end < gems.size(); ++end)
-	{
-		string gem = gems[end];
-
-		if (curGemsNum[gem] == 0)
-		{
-			++curTotalGem;
-			curGemsNum[gem] = 1;
-
-			if (curTotalGem == totalGem)
-				break;
-		}
-		else
-			++curGemsNum[gem];
-	}
-
-	minLen = end - start + 1;
-	answer.push_back(start + 1);
-	answer.push_back(end + 1);
-
-	while (true)
-	{
-		string removed = gems[start];
-		--curGemsNum[removed];
-		++start;
-
-		if (curGemsNum[removed] == 0)
-		{
-			++end;
-			while (end < gems.size())
-			{
-				string added = gems[end];
-				++curGemsNum[added];
-
-				if (removed == added)
-					break;
-
-				++end;
-			}
-
-			if (end >= gems.size())
-				break;
-		}
-		else
-		{
-			if (minLen > end - start + 1)
-			{
-				minLen = end - start + 1;
-
-				answer[0] = start + 1;
-				answer[1] = end + 1;
-			}
-		}
-	}
-
 	return answer;
 }
 */
