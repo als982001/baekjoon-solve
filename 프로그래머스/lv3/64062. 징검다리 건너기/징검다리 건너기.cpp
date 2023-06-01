@@ -1,6 +1,52 @@
 #include <string>
 #include <vector>
 #include <queue>
+using namespace std;
+
+/*
+
+2   0
+4   1
+5   2   => 5
+3   3   => 5
+2   4   => 5
+1   5   => 3
+4   6   => 4
+2   7   => 4
+5   8   => 5
+1   9   => 5
+
+*/
+
+int solution(vector<int> stones, int k) {
+    int answer = 200111111;
+    
+    deque<pair<int, int>> dq;
+    
+    for (int idx = 0; idx < stones.size(); ++idx)
+    {
+        int stone = stones[idx];
+        
+        while(dq.empty() == false && dq.front().second <= idx - k)
+            dq.pop_front();
+        
+        while(dq.empty() == false && dq.back().first < stone)
+            dq.pop_back();
+        
+        dq.push_back({ stone, idx });
+        
+        if (idx >= k - 1 && answer > dq.front().first)
+            answer = dq.front().first;
+    }
+    
+
+    return answer;
+}
+
+/*
+#include <string>
+#include <vector>
+#include <queue>
 
 using namespace std;
 
@@ -9,7 +55,8 @@ using namespace std;
 int solution(vector<int> stones, int k) 
 {
 	int answer = INF;
-
+    
+    // k 구간에 따른 돌의 크기를 비교해 저장하는 deque
 	// first: 각 돌들의 숫자
 	// second: 각 돌들의 index
 	deque<pair<int, int>> dq;
@@ -44,3 +91,4 @@ int solution(vector<int> stones, int k)
 
 	return answer;   
 }
+*/
