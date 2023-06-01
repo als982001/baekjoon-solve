@@ -1,10 +1,9 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#define MAX 101
 
 using namespace std;
-
-#define MAX 101
 
 int parentNode[MAX];
 
@@ -15,10 +14,18 @@ bool Compare(vector<int> a, vector<int> b)
 
 int ParentNode(int node)
 {
-    if (parentNode[node] == node)
-        return parentNode[node];
+    if (node == parentNode[node])
+        return node;
     
     return parentNode[node] = ParentNode(parentNode[node]);
+}
+
+bool IsSame(int a, int b)
+{
+    a = ParentNode(a);
+    b = ParentNode(b);
+    
+    return a == b;
 }
 
 void MakeSame(int a, int b)
@@ -30,26 +37,19 @@ void MakeSame(int a, int b)
         parentNode[b] = a;
     else
         parentNode[a] = b;
-}
-
-bool IsSame(int a, int b)
-{
-    a = ParentNode(a);
-    b = ParentNode(b);
     
-    return a == b;
 }
 
 int solution(int n, vector<vector<int>> costs) {
     int answer = 0;
     
-    for (int node = 0; node < n; ++node)
+    for (int node = 0; node < MAX; ++node)
         parentNode[node] = node;
     
     sort(costs.begin(), costs.end(), Compare);
     
     for (int i = 0; i < costs.size(); ++i)
-    {
+    {   
         int nodeA = costs[i][0];
         int nodeB = costs[i][1];
         int cost = costs[i][2];
@@ -60,6 +60,7 @@ int solution(int n, vector<vector<int>> costs) {
             answer += cost;
         }
     }
+    
     
     return answer;
 }
