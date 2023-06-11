@@ -1,51 +1,5 @@
 #include <string>
 #include <vector>
-#include <algorithm>
-#include <queue>
-
-using namespace std;
-
-bool Compare(vector<int> a, vector<int> b)
-{
-    return a[0] < b[0];
-}
-
-int solution(vector<vector<int>> jobs) {
-    int answer = 0;
-    
-    sort(jobs.begin(), jobs.end(), Compare);
-    
-    int idx = 0;
-    int current = 0;
-    priority_queue<pair<int, int>> pq;
-        
-    while (idx < jobs.size() || !pq.empty())
-    {
-        if (idx < jobs.size() && current >= jobs[idx][0])
-        {
-            pq.push({ -jobs[idx][1], jobs[idx][0] });
-            ++idx;
-            
-            continue;
-        }
-        
-        if (pq.empty() == false)
-        {
-            current += (-pq.top().first);
-            answer += (current - pq.top().second);
-            
-            pq.pop();
-        }  
-        else
-            current = jobs[idx][0];
-    }
-    
-    return answer / jobs.size();
-}
-
-/*
-#include <string>
-#include <vector>
 #include <queue>
 #include <algorithm>
 
@@ -100,4 +54,3 @@ int solution(vector<vector<int>> jobs) {
     
     return answer;
 }
-*/
