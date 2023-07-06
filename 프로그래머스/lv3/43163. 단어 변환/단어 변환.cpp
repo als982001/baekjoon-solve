@@ -1,7 +1,7 @@
 #include <string>
 #include <vector>
 #include <queue>
-#define MAX 11
+#define MAX 12
 using namespace std;
 
 bool checked[MAX];
