@@ -3,21 +3,6 @@
 #include <queue>
 using namespace std;
 
-/*
-
-2   0
-4   1
-5   2   => 5
-3   3   => 5
-2   4   => 5
-1   5   => 3
-4   6   => 4
-2   7   => 4
-5   8   => 5
-1   9   => 5
-
-*/
-
 int solution(vector<int> stones, int k) {
     int answer = 200111111;
     
