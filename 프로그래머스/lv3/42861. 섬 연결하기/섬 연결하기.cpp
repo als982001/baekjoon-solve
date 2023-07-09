@@ -1,7 +1,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
-#define MAX 101
+#define MAX 102
 
 using namespace std;
 
