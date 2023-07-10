@@ -8,7 +8,7 @@
 using namespace std;
 
 #define INF 987654321
-#define MAX 26
+#define MAX 27
 #define STRAIGHT 100
 #define CORNER 500
 
