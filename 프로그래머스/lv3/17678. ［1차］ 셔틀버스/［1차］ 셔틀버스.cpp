@@ -4,7 +4,7 @@
 using namespace std;
 
 #define HOUR 60
-#define MAX 10
+#define MAX 11
 
 int lastBusTime = 0;
 vector<vector<int>> buses;
