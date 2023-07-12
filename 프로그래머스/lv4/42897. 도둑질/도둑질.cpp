@@ -3,7 +3,7 @@
 
 using namespace std;
 
-#define MAX 1000111
+#define MAX 1000112
 
 int dp[MAX][2]; // dp[x][0]: 0번 집을 훔치는 경우
                 // dp[x][1]: 0번 집은 놔두고 1번 집을 훔치는 경우
