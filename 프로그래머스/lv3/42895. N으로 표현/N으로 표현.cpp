@@ -3,7 +3,7 @@
 
 using namespace std;
 
-#define MAX 8
+#define MAX 9
 
 int targetNumber;
 int answer = 987654321;
