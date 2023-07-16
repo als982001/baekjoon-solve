@@ -8,6 +8,7 @@ int keyR, keyC;                 // 키의 행 길이, 열 길이
 int lockR, lockC;               // 자물쇠의 행 길이, 열 길이
 vector<vector<int>> wideLock;   // 자물쇠의 확장판
 
+
 // 키를 회준시키는 함수
 vector<vector<int>> Rotate(vector<vector<int>> key)
 {
