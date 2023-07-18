@@ -8,7 +8,6 @@ using namespace std;
 
 vector<int> solution(vector<string> operations) {
     vector<int> answer;
-    
     deque<int> dq;
     
     for (int i = 0; i < operations.size(); ++i)
@@ -42,8 +41,6 @@ vector<int> solution(vector<string> operations) {
         answer.push_back(dq.back());
         answer.push_back(dq.front());
     }
-    
-
     
     return answer;
 }
