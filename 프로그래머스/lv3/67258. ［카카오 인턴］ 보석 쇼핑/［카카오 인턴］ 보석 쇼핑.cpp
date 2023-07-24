@@ -9,6 +9,7 @@ vector<string> gemTypes;
 map<string, int> numberOfGem;
 
 vector<int> solution(vector<string> gems) {
+    
     vector<int> answer;
     
     for (int i = 0; i < gems.size(); ++i)
