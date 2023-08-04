@@ -11,14 +11,6 @@ vector<int> Check(int startR, int startC, int len)
     
     int num = board[startR][startC];
     
-    if (len == 1)
-    {
-        if (num == 0)
-            return { 1, 0 };
-        else
-            return { 0, 1 };
-    }
-    
     for (int r = startR; r < startR + len; ++r)
     {
         for (int c = startC; c < startC + len; ++c)
