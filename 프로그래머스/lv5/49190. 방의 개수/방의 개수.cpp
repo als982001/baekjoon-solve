@@ -1,7 +1,6 @@
 #include <string>
 #include <vector>
 #include <map>
-
 using namespace std;
 
 int nr[8] = { -1, -1, 0, 1, 1, 1, 0, -1 };
