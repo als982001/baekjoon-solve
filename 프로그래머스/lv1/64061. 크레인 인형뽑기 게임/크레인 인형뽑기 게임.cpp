@@ -3,42 +3,47 @@
 
 using namespace std;
 
+int Pick(vector<vector<int>>& board, int line)
+{
+    int doll = 0;
+    
+    for (int r = 0; r < board.size(); ++r)
+    {
+        if (board[r][line] > 0)
+        {
+            doll = board[r][line];
+            board[r][line] = 0;
+            
+            break;
+        }
+    }
+    
+    return doll;
+}
+
 int solution(vector<vector<int>> board, vector<int> moves) {
     int answer = 0;
-   
-     vector<int> box;
-    int cur_num = 0;
-    int box_num = -1;
-
-    for (int moves_num = 0; moves_num < moves.size(); ++moves_num)
+    
+    vector<int> basket;
+    
+    for (int m = 0; m < moves.size(); ++m)
     {
-        cur_num = moves[moves_num] - 1; // 이건 board의 열(col) 번호다
-
-        for (int board_row = 0; board_row < board.size(); ++board_row)
+        int move = moves[m];
+        
+        int doll = Pick(board, move - 1);
+    
+        if (doll > 0)
         {
-            if (board[board_row][cur_num] == 0)
-                continue;
+            if (basket.size() == 0 || basket.back() != doll)
+                basket.push_back(doll);
             else
             {
-                box.push_back(board[board_row][cur_num]);
-                board[board_row][cur_num] = 0;
-                ++box_num;
-                break;
-            }
-        }
-
-        if (box_num > 0)
-        {
-            if (box[box_num] == box[box_num - 1])
-            {
-                box.pop_back();
-                box.pop_back();
                 answer += 2;
-                box_num -= 2;
+                basket.pop_back();
             }
         }
-
-       
     }
+    
+    
     return answer;
 }
