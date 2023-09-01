@@ -2,64 +2,92 @@
 #include <vector>
 #include <algorithm>
 using namespace std;
-/*
+
+bool checked[100001];
+
+bool Compare(vector<int> a, vector<int> b)
+{
+    return a.size() < b.size();
+}
+
+vector<vector<int>> Parse(string s)
+{
+	vector<vector<int>> result;
+
+	for (int i = 1; i < s.size() - 1; ++i)
+	{
+		if (s[i] == '{')
+		{
+			++i;
+
+			vector<int> set;
+			string num = "";
+
+			while(true)
+			{
+				if (s[i] == '}')
+				{
+					int realNum = stoi(num);
+					set.push_back(realNum);
+					
+					num = "";
+
+					break;
+				}
+				else if (s[i] == ',')
+				{
+					int realNum = stoi(num);
+					set.push_back(realNum);
+					
+					num = "";
+				}
+				else 
+					num += s[i];
+
+				++i;
+			}
+
+			result.push_back(set);
+		}
+	}
+
+	return result;
+}
+
 vector<int> solution(string s) {
     vector<int> answer;
+
+    vector<vector<int>> tuple = Parse(s);
     
-   vector<string> tps(500);
-
-    int tps_num = 0;
-    int norder = 0;
-
-    for (int i = 1; i < s.size(); ++i)
+    sort(tuple.begin(), tuple.end(), Compare);
+    
+    for (int i = 0; i < tuple.size(); ++i)
     {
-        string stemp;
-        int norder = 0;
-
-        if (s[i] == '{')
+        vector<int> curTuple = tuple[i];
+        
+        for (int k = 0; k < curTuple.size(); ++k)
         {
-            while (s[i] != '}')
+            int num = curTuple[k];
+            
+            if (checked[num] == false)
             {
-                if (s[i] == ',')
-                    ++norder;
-                stemp.push_back(s[i]);
-                ++i;
+                checked[num] = true;
+                
+                answer.push_back(num);
+                
+                break;
             }
-
-            tps[norder] = stemp;
-            ++tps_num;
         }
     }
-
-    for (int i = 0; i < tps_num; ++i)
-    {
-        for (int j = 1; j < tps[i].size(); ++j)
-        {
-            string stemp;
-            int ntemp;
-
-            while ('9' >= tps[i][j] && tps[i][j] >= '0')
-            {
-                stemp.push_back(tps[i][j++]);
-            }
-
-            ntemp = stoi(stemp);
-
-            bool isin = false;
-
-            for (int ans_num = 0; ans_num < answer.size(); ++ans_num)
-            {
-                if (ntemp == answer[ans_num])
-                    isin = true;
-            }
-
-            if (!isin)
-                answer.push_back(ntemp);
-        }
-    }
+    
     return answer;
 }
-*/
+
+/*
+#include <string>
+#include <vector>
+#include <algorithm>
+using namespace std;
 
 bool check[100001];
 
@@ -126,3 +154,4 @@ vector<int> solution(string s)
 
 	return answer;
 }
+*/
