@@ -1,95 +1,74 @@
 #include <string>
 #include <vector>
 #include <algorithm>
-#define MAX 10
+#include <map>
+#define MAX 9
 using namespace std;
 
-int answer;
-bool matched[MAX];
+int answer = 0;
+bool checked[MAX];
+vector<string> checkIds;
 vector<string> userIds;
 vector<string> bannedIds;
-vector<string> matchingList;
-vector<vector<string>> allMatchingList; 
+map<vector<string>, bool> answerCheck;
 
-bool Match(string id, string bannedId)
+bool Match(string userId, string bannedId)
 {
-    if (id.size() != bannedId.size())
+    if (userId.length() != bannedId.length())
         return false;
     
-    for (int i = 0; i < id.size(); ++i)
+    for (int i = 0; i < userId.length(); ++i)
     {
         if (bannedId[i] == '*')
             continue;
         
-        if (id[i] != bannedId[i])
+        if (userId[i] != bannedId[i])
             return false;
     }
     
     return true;
 }
 
-bool UniqueMatchingList()
+void Check(int idx)
 {
-    bool isUnique = true;
-    
-    vector<string> curMatchingList = matchingList;
-    sort(curMatchingList.begin(), curMatchingList.end());
-    
-    for (int i = 0; i < allMatchingList.size(); ++i)
+    if (idx >= bannedIds.size())
     {
-        bool isSame = true;
+        vector<string> result = checkIds;
         
-        for (int k = 0; k < allMatchingList[i].size(); ++k)
+        sort(result.begin(), result.end());
+        
+        if (answerCheck[result] == false)
         {
-            if (allMatchingList[i][k] != curMatchingList[k])
-            {
-                isSame = false;
-                break;
-            }
-        }
-        
-        if (isSame)
-            return false;
-    }
-    
-    allMatchingList.push_back(curMatchingList);
-    
-    return true;
-}
-
-void Check(int bannedIdx)
-{
-    if (bannedIdx >= bannedIds.size())
-    {
-        if (UniqueMatchingList() == true)
+            answerCheck[result] = true;
             ++answer;
+        }
         
         return;
     }
     
+    string bannedId = bannedIds[idx];
+    
     for (int i = 0; i < userIds.size(); ++i)
     {
-        if (matched[i] == false)
+        if (checked[i] == false)
         {
             string userId = userIds[i];
-            
-            if (Match(userId, bannedIds[bannedIdx]) == true)
+        
+            if (Match(userId, bannedId) == true)
             {
-                matched[i] = true;
-                matchingList.push_back(userId);
-                
-                Check(bannedIdx + 1);
-                
-                matchingList.pop_back();
-                matched[i] = false;
-            }
+                checked[i] = true;
+                checkIds.push_back(userId);
+
+                Check(idx + 1);
+
+                checkIds.pop_back();
+                checked[i] = false;
+            }   
         }
     }
 }
 
-
 int solution(vector<string> user_id, vector<string> banned_id) {
-    
     userIds = user_id;
     bannedIds = banned_id;
     
