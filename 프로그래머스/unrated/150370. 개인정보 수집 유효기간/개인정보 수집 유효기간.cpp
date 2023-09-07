@@ -26,6 +26,7 @@ info Info(string strInfo)
 	int day = stoi(strInfo.substr(8, 2));
 
 	info today;
+    
 	today.year = year;
 	today.month = month;
 	today.day = day;
