@@ -4,7 +4,7 @@
 
 using namespace std;
 
-#define MAX 51
+#define MAX 52
 #define IMPOSSIBLE "impossible"
 
 int R, C, limit;
