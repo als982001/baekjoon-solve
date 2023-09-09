@@ -14,7 +14,6 @@ string DecToBin(long long number)
 	while (number > 0)
 	{
 		number % 2 == 1 ? result += '1' : result += '0';
-        
 		number /= 2;
 	}
 
