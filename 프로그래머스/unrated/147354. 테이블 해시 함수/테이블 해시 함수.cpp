@@ -22,7 +22,6 @@ int solution(vector<vector<int>> data, int col, int row_begin, int row_end) {
     col -= 1;
     row_begin -= 1;
     row_end -= 1;
-    
     keyCol = col;
     
     sort(data.begin(), data.end(), Compare);
