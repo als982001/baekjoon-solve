@@ -6,6 +6,7 @@ using namespace std;
 
 bool checked[MAX];
 
+
 bool CanChange(string from, string to)
 {
     int diffNum = 1;
