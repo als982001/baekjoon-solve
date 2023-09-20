@@ -12,6 +12,7 @@ vector<int> links[MAX];
 void Check(int startNode)
 {
     queue<pair<int, int>> q;
+    
     q.push({ startNode, 0 });
     visited[startNode] = true;
     
