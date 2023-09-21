@@ -1,7 +1,6 @@
 #include <string>
 #include <vector>
 #include <algorithm>
-
 using namespace std;
 
 // 노드 타입형
