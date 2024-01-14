@@ -16,5 +16,5 @@ int solution(vector<int> nums)
         ++count[num];
     }
     
-    return answer > nums.size() / 2 ? nums.size() / 2 : answer;
+    return nums.size() / 2 < answer ? nums.size() / 2 : answer;
 }
