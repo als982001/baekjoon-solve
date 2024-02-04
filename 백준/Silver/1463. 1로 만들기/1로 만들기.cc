@@ -1,9 +1,9 @@
 #include <iostream>
 #include <string>
+#include <sstream>
 #include <vector>
 #include <algorithm>
 #include <queue>
-#include <map>
 #include <memory.h>
 #include <deque>
 #include <cmath>
@@ -12,58 +12,52 @@
 #include <typeinfo>
 #include <iomanip>
 #include <limits.h> 
+#include <map>
+#include <unordered_set>
+#include <set>
 #pragma warning(disable:4996)
+#define MAX 1000001
 
 using namespace std;
 
-#define CASE 3
-#define MAX 1000010
-
-int X, answer = MAX;
+int X;
 int dp[MAX];
-
-int Smaller(int a, int b)
-{
-	return a < b ? a : b;
-}
 
 int Check(int num)
 {
-	if (num == 1)
-		return 0;
+    if (num == 1)
+        return 1;
 
-	if (dp[num] > 0)
-		return dp[num];
+    if (dp[num] > 0)
+        return dp[num];
 
-	dp[num] = MAX;
-	int& curDp = dp[num];
+    int result = MAX + MAX;
 
-	if (num % 3 == 0)
-		curDp = Smaller(curDp, Check(num / 3) + 1);
+    if (num % 3 == 0)
+        result = min(result, Check(num / 3));
 
-	if (num % 2 == 0)
-		curDp = Smaller(curDp, Check(num / 2) + 1);
+    if (num % 2 == 0)
+        result = min(result, Check(num / 2));
+    
+    result = min(result, Check(num - 1));
 
-	curDp = Smaller(curDp, Check(num - 1) + 1);
-
-	return curDp;
+    return dp[num] = result + 1;
 }
 
 int main()
 {
-	ios_base::sync_with_stdio(false); 
-    cin.tie(NULL); 
-    cout.tie(NULL);
+    ios_base::sync_with_stdio(0);
+	std::cout.tie(NULL);    
+	std::cin.tie(NULL);
 
-	for (int i = 0; i < MAX; ++i)
-		dp[i] = -1;
+    for (int i = 0; i < MAX; ++i)
+        dp[i] = -1;
 
-	cin >> X;
+    cin >> X;
 
-	int answer = Check(X);
+    int answer = Check(X);    
 
-	cout << answer << endl;
+    cout << answer - 1 << endl;
 
-
-	return 0;
+    return 0;
 }
