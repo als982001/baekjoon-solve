@@ -3,7 +3,7 @@
 using namespace std;
 
 int N;
-pair<long long, long long> dp[80];
+pair<long long, long long> dp[1000000];
 
 pair<long long, long long> Check(int num)
 {
@@ -21,7 +21,7 @@ int main()
 	std::cout.tie(NULL);    
 	std::cin.tie(NULL);
 
-    for (int i = 1; i <= 80; ++i)  
+    for (int i = 1; i <= 1000000; ++i)  
         dp[i] = { -1, -1 };
 
     dp[1] = { 1, 1 };
