@@ -1,67 +1,47 @@
 #include <iostream>
-#include <string>
 #include <vector>
-#include <algorithm>
-#include <queue>
-#include <memory.h>
-#include <deque>
-#include <cmath>
-#include <stack>
-#include <cstring>
-#include <typeinfo>
-#include <iomanip>
-#include <limits.h> 
-// #include <map>
-#pragma warning(disable:4996)
+#define MAX 12
 
 using namespace std;
 
-#define MAX 12
-
-int caseNum;
-int n;
+int T, n;
 int dp[MAX];
 vector<int> answer;
 
 int Check(int num)
 {
-	if (dp[num] >= 0)
-		return dp[num];
+    if (dp[num] > -1)
+        return dp[num];
 
-	int& current = dp[num];
-	current = 0;
-
-	for (int part = 1; part <= 3; ++part)
-		current += Check(num - part);
-
-	return current;
+    return dp[num] = Check(num - 1) + Check(num - 2) + Check(num - 3);
 }
 
 int main()
 {
-	ios_base::sync_with_stdio(false);
+    ios_base::sync_with_stdio(0);
+	std::cout.tie(NULL);    
 	std::cin.tie(NULL);
-	std::cout.tie(NULL);	
+    
+    for (int i = 0; i < MAX; ++i)
+        dp[i] = -1;
+    dp[1] = 1;
+    dp[2] = 2;
+    dp[3] = 4;
 
-	memset(dp, -1, sizeof(dp));
+    cin >> T;
 
-	dp[1] = 1;
-	dp[2] = 2;
-	dp[3] = 4;
-	dp[4] = 7;
+    while(T--)
+    {
+        cin >> n;
 
-	cin >> caseNum; 
+        int result = Check(n);
 
-	while(caseNum--)
-	{
-		cin >> n;
+        answer.push_back(result);
+    }
 
-		answer.push_back(Check(n));
-	}
+    for (int i = 0; i < answer.size(); ++i)
+        cout << answer[i] << endl;
+  
 
-	for (int i = 0; i < answer.size(); ++i)
-		cout << answer[i] << endl;
-	
-
-	return 0;
-}
+    return 0;
+}       
