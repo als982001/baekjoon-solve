@@ -1,21 +1,4 @@
 #include <iostream>
-#include <string>
-#include <sstream>
-#include <vector>
-#include <algorithm>
-#include <queue>
-#include <memory.h>
-#include <deque>
-#include <cmath>
-#include <stack>
-#include <cstring>
-#include <typeinfo>
-#include <iomanip>
-#include <limits.h> 
-#include <map>
-#include <unordered_set>
-#include <set>
-#pragma warning(disable:4996)
 #define MAX 1000001
 
 using namespace std;
@@ -26,7 +9,7 @@ int dp[MAX];
 int Check(int num)
 {
     if (num == 1)
-        return 1;
+        return 0;
 
     if (dp[num] > 0)
         return dp[num];
@@ -34,14 +17,14 @@ int Check(int num)
     int result = MAX + MAX;
 
     if (num % 3 == 0)
-        result = min(result, Check(num / 3));
+        result = min(result, Check(num / 3) + 1);
 
     if (num % 2 == 0)
-        result = min(result, Check(num / 2));
+        result = min(result, Check(num / 2) + 1);
     
-    result = min(result, Check(num - 1));
+    result = min(result, Check(num - 1) + 1);
 
-    return dp[num] = result + 1;
+    return dp[num] = result;
 }
 
 int main()
@@ -57,7 +40,7 @@ int main()
 
     int answer = Check(X);    
 
-    cout << answer - 1 << endl;
+    cout << answer << endl;
 
     return 0;
 }
