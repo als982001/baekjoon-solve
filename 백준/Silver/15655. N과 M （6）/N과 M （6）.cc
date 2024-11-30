@@ -1,6 +1,5 @@
 #include <iostream>
 #include <vector>
-#include <map>
 #include <algorithm>
 
 using namespace std;
@@ -8,7 +7,6 @@ using namespace std;
 int n, m;
 vector<int> arr;
 vector<int> nums;
-map<int, bool> check;
 
 void Solve(int idx, int cnt)
 {
@@ -22,16 +20,9 @@ void Solve(int idx, int cnt)
     
     for (int i = idx; i < nums.size(); ++i)
     {
-        if (check[i] == false)
-        {
-            check[i] = true;
-            arr.push_back(nums[i]);
-            
-            Solve(i + 1, cnt + 1);
-            
-            arr.pop_back();
-            check[i] = false;
-        }
+        arr.push_back(nums[i]);
+        Solve(i + 1, cnt + 1);
+        arr.pop_back();
     }
 }
 
@@ -43,8 +34,7 @@ int main() {
         int num;
         
         scanf("%d", &num);
-        
-        check[num] = false;
+       
         nums.push_back(num);
     }
     
