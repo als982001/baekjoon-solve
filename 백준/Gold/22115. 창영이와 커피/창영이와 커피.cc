@@ -1,6 +1,5 @@
 #include <iostream>
 #include <vector>
-#include <algorithm>
 
 using namespace std;
 
@@ -11,28 +10,39 @@ int N, K;
 int caffeines[101];
 int dp[MAX];
 
-void Init() {
-    fill(dp, dp + MAX, INF);
-    dp[0] = 0; // 카페인 필요량이 0이면 커피를 마실 필요 없음
+void Init()
+{
+    for (int i = 0; i < MAX; ++i)
+        dp[i] = INF;
+        
+    dp[0] = 0;
 }
 
-int main() {
-    scanf("%d %d", &N, &K);
 
-    for (int n = 1; n <= N; ++n) {
-        scanf("%d", &caffeines[n]);
-    }
-
+int main()
+{
     Init();
 
-    for (int i = 1; i <= N; ++i) {
-        for (int j = K; j >= caffeines[i]; --j) {
-            dp[j] = min(dp[j], dp[j - caffeines[i]] + 1);
-        }
+    scanf("%d %d", &N, &K);
+    
+    for (int n = 1; n <= N; ++n)
+        scanf("%d", &caffeines[n]);
+    
+    for (int coffeeIndex = 1; coffeeIndex <= N; ++coffeeIndex)
+    {
+        int currentCafffeine = caffeines[coffeeIndex];
+        
+        for (int requiredCaffeine = K; requiredCaffeine >= currentCafffeine; --requiredCaffeine)
+            dp[requiredCaffeine] = min(dp[requiredCaffeine], dp[requiredCaffeine - currentCafffeine] + 1);
     }
 
     int answer = dp[K] == INF ? -1 : dp[K];
+    
     printf("%d\n", answer);
-
+   
     return 0;
 }
+
+
+
+
