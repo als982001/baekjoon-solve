@@ -7,6 +7,9 @@ int main(void) {
     string str1, str2;
     cin >> str1 >> str2;
     
-    cout << str1 << str2 << endl;
+    string answer = str1 + str2;
+    
+    cout << answer << endl;
+    
     return 0;
 }
