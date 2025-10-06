@@ -7,9 +7,8 @@ int main(void) {
     cin >> n;
     
     if (n % 2 == 0)
-        printf("%d is even\n", n);
+        cout << n << " is even";
     else
-        printf("%d is odd\n", n);
-    
+        cout << n << " is odd";
     return 0;
 }
