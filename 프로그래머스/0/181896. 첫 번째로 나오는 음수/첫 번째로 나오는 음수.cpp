@@ -8,7 +8,9 @@ int solution(vector<int> num_list) {
     
     for (int i = 0; i < num_list.size(); ++i)
     {
-        if (num_list[i] < 0) 
+        int num = num_list[i];
+        
+        if (num < 0)
         {
             answer = i;
             break;
