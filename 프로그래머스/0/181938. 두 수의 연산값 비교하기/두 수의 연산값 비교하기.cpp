@@ -3,21 +3,22 @@
 
 using namespace std;
 
-int XOR(int a, int b)
+int Calc01 (int a, int b)
 {
-    string strA = to_string(a);
-    string strB = to_string(b);
+    string numStr = to_string(a) + to_string(b);
     
-    return stoi(strA + strB);
+    return stoi(numStr);
+}
+
+int Calc02 (int a, int b)
+{
+    return 2 * a * b;
 }
 
 int solution(int a, int b) {
     int answer = 0;
     
-    int result1 = XOR(a, b);
-    int result2 = 2 * a * b;
-    
-    answer = max(result1, result2);
+    answer = max(Calc01(a, b), Calc02(a, b));
     
     return answer;
 }
