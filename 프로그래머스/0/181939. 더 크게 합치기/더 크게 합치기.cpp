@@ -3,19 +3,16 @@
 
 using namespace std;
 
+int Calc(int a, int b)
+{
+    string aStr = to_string(a);
+    string bStr = to_string(b);
+    
+    return stoi(aStr + bStr);
+}
+
 int solution(int a, int b) {
     int answer = 0;
-        
-    string strA = to_string(a);
-    string strB = to_string(b);
     
-    int num1 = stoi(strA + strB);
-    int num2 = stoi(strB + strA);
-    
-    if (num1 > num2)
-        answer = num1;
-    else
-        answer = num2;
-    
-    return answer;
+    return max(Calc(a, b), Calc(b, a));
 }
