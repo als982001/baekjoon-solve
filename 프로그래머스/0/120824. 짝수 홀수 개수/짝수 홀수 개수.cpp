@@ -6,10 +6,8 @@ using namespace std;
 vector<int> solution(vector<int> num_list) {
     vector<int> answer(2, 0);
     
-    for (int i = 0; i < num_list.size(); ++i)
+    for (int num : num_list)
     {
-        int num = num_list[i];
-        
         if (num % 2 == 0)
             answer[0] += 1;
         else
