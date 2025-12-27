@@ -1,50 +1,24 @@
 #include <string>
 #include <vector>
+#include <iostream>
+
 #define MAX 101
 #define MOD 1000000007
 
 using namespace std;
 
-int maxR, maxC;
-bool canVisit[MAX][MAX];
-int record[MAX][MAX];
-int dir[2][2] = { { 1, 0 }, { 0, 1 } };
-
-int Visit(int r, int c)
-{       
-    if (r == maxR && c == maxC)
-        return 1;
-    
-    if (record[r][c] > -1)
-        return record[r][c];
-    
-    record[r][c] = 0;
-    
-    for (int i = 0; i < 2; ++i)
-    {
-        int nxtR = r + dir[i][0];
-        int nxtC = c + dir[i][1];
-                
-        if (nxtR <= maxR && nxtC <= maxC && canVisit[nxtR][nxtC])
-            record[r][c] = (record[r][c] + Visit(nxtR, nxtC)) % MOD;
-    }
-    
-    return record[r][c];
-}
+int dp[MAX][MAX]; // (r, c)를 갈 수 있는 횟수 저장. -1이면 못 가는 곳
 
 int solution(int m, int n, vector<vector<int>> puddles) {
     int answer = 0;
     
-    maxR = n;
-    maxC = m;
+    int maxR = n;
+    int maxC = m;
     
     for (int r = 0; r < MAX; ++r)
     {
         for (int c = 0; c < MAX; ++c)
-        {
-            record[r][c] = -1;
-            canVisit[r][c] = true;
-        }
+            dp[r][c] = 0;
     }
     
     for (vector<int> puddle : puddles)
@@ -52,10 +26,28 @@ int solution(int m, int n, vector<vector<int>> puddles) {
         int r = puddle[1];
         int c = puddle[0];
         
-        canVisit[r][c] = false;
+        dp[r][c] = -1; // -1이면 못 가는 곳
     }
-        
-    answer = Visit(1, 1);    
+    
+    dp[1][1] = 1;
+    
+    for (int r = 1; r <= maxR; ++r)
+    {
+        for (int c = 1; c <= maxC; ++c)
+        {  
+            if (dp[r][c] == -1)
+                continue;
+            
+            if (dp[r - 1][c] != -1)
+                dp[r][c] = (dp[r][c] + dp[r - 1][c]) % MOD;
+            
+            if (dp[r][c - 1] != -1)
+                dp[r][c] = (dp[r][c] + dp[r][c - 1]) % MOD;
+        }
+    }
+    
+    answer = dp[maxR][maxC];
+    
     
     return answer;
 }
