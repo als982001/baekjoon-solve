@@ -48,7 +48,7 @@ vector<int> solution(vector<vector<int>> edges) {
         // [막대 그래프] 
         // 특징: 나가는 간선이 없음 (Out == 0)
         // 필수조건: 그래프의 일부여야 함 -> 들어오는 간선은 있어야 함 (In > 0)
-        // 이 조건(In > 0)이 35번 케이스(존재하지 않는 노드)를 걸러줍니다.
+        // 이 조건(In > 0)이 35번 케이스(존재하지 않는 노드)를 거름
         if (outDegree[node] == 0 && inDegree[node] > 0)
         {
             stickGraphNum++;
