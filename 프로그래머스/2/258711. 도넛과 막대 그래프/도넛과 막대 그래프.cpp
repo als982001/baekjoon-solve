@@ -1,3 +1,5 @@
+
+
 #include <string>
 #include <vector>
 #include <iostream>
@@ -69,3 +71,4 @@ vector<int> solution(vector<vector<int>> edges) {
     
     return { additionalNode, donutGraphNum, stickGraphNum, eightGraphNum };
 }
+
