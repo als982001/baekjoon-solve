@@ -1,3 +1,4 @@
+
 #include <string>
 #include <vector>
 #include <set>
@@ -67,4 +68,3 @@ int solution(int n, vector<int> tops) {
     return (가로로_긴_마름모로_끝남[lastIdx] + 그_외_케이스[lastIdx]) % MOD;
 
 }
-
