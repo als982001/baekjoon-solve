@@ -1,6 +1,107 @@
 #include <string>
 #include <vector>
 #include <set>
+
+using namespace std;
+
+set<int> myHand;
+set<int> drawn;
+
+bool Check(set<int>& cards1, set<int>& cards2, int targetNum)
+{
+    bool success = false;
+    
+    for (int card : cards1)
+    {
+        int pairCard = targetNum - card;
+        
+        if (cards1 == cards2 && cards1.count(pairCard))
+        {
+            cards1.erase(card);
+            cards1.erase(pairCard);
+            
+            success = true;
+            break;
+        }
+        else if (cards2.count(pairCard))
+        {
+            cards1.erase(card);
+            cards2.erase(pairCard);
+            
+            success = true;
+            break;
+        }
+    }
+    
+    return success;
+}
+
+int solution(int coin, vector<int> cards) {
+    int answer = 1;
+    
+    int allCardsCnt = cards.size();
+    int targetNum = allCardsCnt + 1;
+    
+    int idx = 0; 
+    
+    for (; idx < allCardsCnt / 3; ++idx)
+        myHand.insert(cards[idx]);
+    
+    while(idx < allCardsCnt)
+    {
+        bool success = false;
+        
+        drawn.insert(cards[idx++]);
+        drawn.insert(cards[idx++]);
+        
+        if (Check(myHand, myHand, targetNum))
+        {
+            ++answer;
+            success = true;
+            
+            continue;
+        }
+        
+        if (coin > 0 && Check(myHand, drawn, targetNum))
+        {
+            ++answer;
+            success = true;
+            --coin;
+            
+            continue;
+        }
+        
+        if (coin > 1 && Check(drawn, drawn, targetNum))
+        {
+            ++answer;
+            success = true;
+            coin -= 2;
+            
+            continue;
+        }
+        
+        if (success == false)
+            break;
+    }
+    
+    return answer;
+    
+    
+}
+
+
+
+
+
+
+
+
+
+/*
+
+#include <string>
+#include <vector>
+#include <set>
 #include <iostream>
 
 using namespace std;
@@ -111,3 +212,5 @@ int solution(int coin, vector<int> cards) {
     
     return answer;
 }
+
+*/
