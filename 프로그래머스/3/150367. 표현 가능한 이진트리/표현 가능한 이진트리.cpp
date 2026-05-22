@@ -1,6 +1,130 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include<cmath>
+
+#include <iostream>
+
+using namespace std;
+
+string NumToBin(long long num)
+{
+    string result = "";
+    
+    while(num > 0)
+    {
+        int r = num % 2;
+        
+        result += to_string(r);
+        num /= 2;
+    }
+    
+    // 이진 트리에 맞게 길이 조정
+    int targetLen = 1;
+    
+    while(targetLen < result.size())
+        targetLen = ((targetLen + 1) * 2) - 1;
+    
+    while(result.size() < targetLen)
+        result += "0";
+    
+    reverse(result.begin(), result.end());
+    
+    return result;
+}
+
+// 1 0 1 1 1 1 1
+// 0 1 2 3 4 5 6
+bool CheckValidBinary(string bin, int idx, int height, bool onlyZero)
+{ 
+    // 리프 노드인 경우, 0이어도 상관없음
+    if (idx % 2 == 0)
+    {
+        if (onlyZero)
+            return bin[idx] == '0';
+        
+        return true;
+    }
+    
+    if (idx % 2 == 1)
+    {
+        if (onlyZero && bin[idx] == '1')
+            return false;
+        
+        // 현재 노드가 0이면 자식 노드 전부 0이어야 함
+        bool isOnlyZero = bin[idx] == '0';
+        
+        int idxDiff = pow(2, height - 1);
+        
+        int nxtLeftIdx = idx - idxDiff;
+        int nxtRightIdx = idx + idxDiff;
+        
+        return CheckValidBinary(bin, nxtLeftIdx, height - 1, isOnlyZero) && CheckValidBinary(bin, nxtRightIdx, height - 1, isOnlyZero);
+    }
+}
+
+/*
+
+                    7
+        3                      11 
+   1         5           9            13
+0    2    4     6     8     10    12      14
+
+
+
+
+        3   
+   1          5
+0     2    4     6
+
+
+
+   1
+0     2
+*/
+
+int GetHeight(int binLen)
+{
+    int maxHeight = 1;
+    int len = 1;
+    
+    while(len <= binLen)
+    {
+        ++maxHeight;
+        len *= 2;
+    }
+    
+    return maxHeight - 1;
+}
+
+
+vector<int> solution(vector<long long> numbers) {
+    vector<int> answer;
+    
+    for (long long num : numbers)
+    {
+        string bin = NumToBin(num);
+        
+        int rootNodeHeight = GetHeight(bin.size());
+                
+        bool isValid = CheckValidBinary(bin, bin.size() / 2, rootNodeHeight - 1, false);
+        
+        answer.push_back(isValid ? 1 : 0);
+    }
+    
+    return answer;
+}
+
+
+
+
+
+
+/*
+
+#include <string>
+#include <vector>
+#include <algorithm>
 
 using namespace std;
 
@@ -83,3 +207,6 @@ vector<int> solution(vector<long long> numbers) {
 }
 
 
+
+
+*/
