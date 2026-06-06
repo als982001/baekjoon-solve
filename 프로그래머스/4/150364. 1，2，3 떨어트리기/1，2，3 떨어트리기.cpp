@@ -3,31 +3,32 @@
 #include <algorithm>
 #include <iostream>
 
-#define MAX 105
 #define ROOT 1
+#define MAX 103
 
 using namespace std;
 
-bool isPossible;
-int lastNode;
-int boxes[MAX];
+int lastNode = -1;
 int linkIdx[MAX];
-int targetNums[MAX];
-vector<int> boxOrder;
+int boxes[MAX];
 vector<int> linkedNodes[MAX];
+vector<int> boxOrder;
+vector<int> targetNums;
 
-// 답을 구할 수 있는지에 대한 상태 체크
-// 0: 아직 모름
-// 1: 답 구할 수 있음
-// 2: target대로 숫자의 합 만들 수 없음
-int CheckCondition()
+// 박스 떨어트리기 상태 확인
+// 2: target대로 숫자의 합을 만들 수 없는 경우
+// 1: target대로 숫자의 합을 만들 수 있는 경우
+// 0: 아직 모르는 경우
+int CheckBoxCondition()
 {
     int result = 1;
     
-    // 숫자의 합을 만들 수 없는 케이스 존재
+    // 숫자의 합을 만들 수 없는 경우
+    // box 개수가 target 숫자보다 큰 경우 (1로 전부 채워도 초과되버리는 케이스)
+    
     for (int node = 1; node <= lastNode; ++node)
     {
-        if (boxes[node] > targetNums[node])
+        if (targetNums[node] < boxes[node])
         {
             result = 2;
             break;
@@ -37,13 +38,13 @@ int CheckCondition()
     if (result == 2)
         return 2;
     
-    // 아직 모르는 케이스
+    // 아직 모르는 경우
     for (int node = 1; node <= lastNode; ++node)
     {
-        int minBox = (targetNums[node] + 2) / 3;
+        int minBoxes = (targetNums[node] + 2) / 3;
         
-        // 필요한 최소 박스만큼도 없다면 더 확인해봐야 함
-        if (boxes[node] < minBox)
+        // 최소 박스 개수보다 모자란 경우
+        if (boxes[node] < minBoxes)
         {
             result = 0;
             break;
@@ -53,97 +54,113 @@ int CheckCondition()
     if (result == 0)
         return 0;
     
-    // 만들 수 있음
     return 1;
+}
+
+void UpdateLinkIdx(int node)
+{
+    int nxtLinkIdx = linkIdx[node] + 1;
+    
+    if (nxtLinkIdx >= linkedNodes[node].size())
+        nxtLinkIdx = 0;
+    
+    linkIdx[node] = nxtLinkIdx;
 }
 
 void FallBox()
 {
-    int node = ROOT;
+    int targetNode = ROOT;
     
     while(true)
     {
-        // 리프 노드인 경우
-        if (linkedNodes[node].size() == 0)
+        // 리프노드인 경우
+        if (targetNums[targetNode] > 0)
             break;
         
-        int curLinkIdx = linkIdx[node];
-        int nxtNode = linkedNodes[node][curLinkIdx];
+        int curLinkIdx = linkIdx[targetNode];
+        int nxtNode = linkedNodes[targetNode][curLinkIdx];
         
-        ++linkIdx[node];
+        UpdateLinkIdx(targetNode);
         
-        if (linkIdx[node] >= linkedNodes[node].size())
-            linkIdx[node] = 0;
-        
-        node = nxtNode;
+        targetNode = nxtNode;
     }
     
-    ++boxes[node];
-    boxOrder.push_back(node);
+    boxOrder.push_back(targetNode);
+    boxes[targetNode]++;
+}
+
+int GetNumber(int targetNode)
+{
+    int targetNum = targetNums[targetNode];
+    --boxes[targetNode];
+    
+    // 사전 순서니까 1부터 확인
+    if (targetNum - 1 <= boxes[targetNode] * 3)
+    {
+        targetNums[targetNode] -= 1;
+        return 1;
+    }
+    
+    if (targetNum - 2 <= boxes[targetNode] * 3)
+    {
+        targetNums[targetNode] -= 2;
+        return 2;
+    }
+    
+    targetNums[targetNode] -= 3;
+    return 3;
 }
 
 vector<int> solution(vector<vector<int>> edges, vector<int> target) {
     vector<int> answer;
     
-    isPossible = true;
-    lastNode = target.size();
+    bool success = true;
     
     for (vector<int> edge : edges)
     {
         linkedNodes[edge[0]].push_back(edge[1]);
+        
+        if (lastNode < edge[0])
+            lastNode = edge[0];
+        
+        if (lastNode < edge[1])
+            lastNode = edge[1];
     }
     
     for (int node = 1; node <= lastNode; ++node)
     {
         boxes[node] = 0;
-        targetNums[node] = target[node - 1];
         linkIdx[node] = 0;
-        
         sort(linkedNodes[node].begin(), linkedNodes[node].end());
     }
-
+    
+    targetNums.push_back(0);
+    
+    for (int targetNum : target)
+        targetNums.push_back(targetNum);
     
     while(true)
     {
-        int checkResult = CheckCondition();
+        int checkResult = CheckBoxCondition();
         
-        // 숫자를 만들 수 있는지 없는지 판별됨
-        if (checkResult != 0)
+        if (checkResult > 0)
         {
-            isPossible = checkResult == 1;
+            if (checkResult == 2)
+                success = false;
+                
             break;
         }
         
         FallBox();
     }
     
-    // target대로 숫자의 합을 만들 수 없는 경우
-    if (isPossible == false)
+    if (success == false)
         return { -1 };
     
-    for (int node : boxOrder)
+    for (int targetNode : boxOrder)
     {
-        --boxes[node];
-        int leftBox = boxes[node];
-        int targetNum = targetNums[node];
-        
-        if (targetNum - 1 <= leftBox * 3)
-        {
-            answer.push_back(1);
-            targetNums[node] -= 1;
-        }
-        else if (targetNum - 2 <= leftBox * 3)
-        {
-            answer.push_back(2);
-            targetNums[node] -= 2;
-        }
-        else
-        {
-            answer.push_back(3);
-            targetNums[node] -= 3;
-        }
-        
-        
+        int num = GetNumber(targetNode);
+        answer.push_back(num);
     }
     
     return answer;
@@ -161,9 +178,7 @@ vector<int> solution(vector<vector<int>> edges, vector<int> target) {
 
 
 
-
 /*
-
 
 
 #include <string>
@@ -305,6 +320,7 @@ vector<int> solution(vector<vector<int>> edges, vector<int> target) {
     
     return answer;
 }
+
 
 
 */
