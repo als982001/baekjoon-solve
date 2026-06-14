@@ -1,5 +1,85 @@
 #include <string>
 #include <vector>
+#include <map>
+#include <sstream>
+#include <iostream>
+
+using namespace std;
+
+map<string, int> reportedCount;
+map<string, vector<string>> reportIds;
+
+bool ReportedId(string reporter, string reportedId)
+{
+    bool isReportedId = false;
+    
+    for (string reportId : reportIds[reporter])
+    {
+        if (reportId == reportedId)
+        {
+            isReportedId = true;
+            break;
+        }
+    }
+    
+    return isReportedId;
+}
+
+vector<int> solution(vector<string> id_list, vector<string> reports, int k) {
+    vector<int> answer;
+    
+    for (string id : id_list)
+    {
+        reportedCount[id] = 0;
+        reportIds[id] = {};
+    }
+    
+    for (string report : reports)
+    {
+        stringstream ss(report);
+        string segment;
+        
+        vector<string> reportInfo;
+        
+        while(getline(ss, segment, ' '))
+            reportInfo.push_back(segment);
+        
+        if (ReportedId(reportInfo[0], reportInfo[1]) == false)
+        {
+            ++reportedCount[reportInfo[1]];
+            reportIds[reportInfo[0]].push_back(reportInfo[1]);
+        }
+    }
+    
+    for (string id : id_list)
+    {
+        int mail = 0;
+        
+        for (string reportedId : reportIds[id])
+        {
+            if (reportedCount[reportedId] >= k)
+                ++mail;
+        }
+        
+        answer.push_back(mail);
+    }
+    
+    return answer;
+}
+
+
+
+
+
+
+
+
+
+
+/*
+
+#include <string>
+#include <vector>
 #include <sstream>
 #include <map>
 #include <iostream>
@@ -49,3 +129,6 @@ vector<int> solution(vector<string> id_list, vector<string> report, int k) {
     
     return answer;
 }
+
+
+*/
