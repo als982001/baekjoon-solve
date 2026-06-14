@@ -1,6 +1,99 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+
+#define MAX 1000001
+
+using namespace std;
+
+string Convert(int num, int k)
+{
+    string result = "";
+    
+    while(num > 0)
+    {
+        long long rest = num % k;
+        result += to_string(rest);
+        num /= k;
+    }
+    
+    reverse(result.begin(), result.end());
+    
+    return result;
+}
+
+vector<long long> Split(string num)
+{
+    vector<long long> result;
+    
+    string splitNum = "";
+    
+    for (int i = 0; i < num.size(); ++i)
+    {
+        if (num[i] == '0')
+        {
+            if (splitNum.size() > 0)
+            {
+                long long targetNum = stoll(splitNum);
+    
+                result.push_back(stoll(splitNum));
+                splitNum = "";
+            }
+        }
+        else
+            splitNum += num[i];
+    }
+    
+    if (splitNum.size() > 0)                
+        result.push_back(stoll(splitNum));
+    
+    return result;
+}
+
+bool CheckPrimeNumber(long long num)
+{
+    if (num < 2)
+        return false;
+    
+    bool isPrimeNumber = true;
+
+    for (long long k = 2; k * k <= num; ++k)
+    {
+        if (num % k == 0)
+        {
+            isPrimeNumber = false;
+            break;
+        }
+            
+    }
+    
+    return isPrimeNumber;
+}
+
+int solution(int n, int k) {
+    int answer = 0;
+    
+    string convertedNum = Convert(n, k);
+    
+    vector<long long> nums = Split(convertedNum);
+    
+    for (long long num : nums)
+    {
+        bool isPrimeNumber = CheckPrimeNumber(num);
+        
+        if (isPrimeNumber)
+            ++answer;
+    }
+    
+    return answer;
+}
+
+
+/*
+
+#include <string>
+#include <vector>
+#include <algorithm>
 #include <cmath>
 
 #define MAX 1000111
@@ -88,3 +181,6 @@ int solution(int n, int k) {
     
     return answer;
 }
+
+
+*/
