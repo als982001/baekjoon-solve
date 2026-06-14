@@ -1,3 +1,5 @@
+
+
 #include <string>
 #include <vector>
 #include <sstream>
@@ -129,7 +131,6 @@ int solution(vector<vector<int>> board, vector<vector<int>> skill)
 
 	return answer;
 }
-
 
 
 */
