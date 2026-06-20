@@ -4,6 +4,130 @@
 
 using namespace std;
 
+int maxScoreDiff = 0;
+int apeachScore;
+vector<int> lionArrows;
+vector<int> apeachArrows;
+vector<int> answer = { -1 };
+
+int GetScoreDiff()
+{
+    int lionScore = 0;
+    int apeachScore = 0;
+    
+    for (int num = 10; num >= 0; --num)
+    {
+        if (lionArrows[num] > apeachArrows[num])
+            lionScore += num;
+        else if (apeachArrows[num] > 0)
+            apeachScore += num;
+    }
+    
+    return lionScore - apeachScore;
+}
+
+bool CanUpdateAnswer()
+{   
+    if (answer.size() == 1)
+        return true;
+ 
+    bool canUpdate = true;
+    
+    for (int num = 0; num <= 10; ++num)
+    {
+        if (answer[num] < lionArrows[num])
+        {
+            canUpdate = true;
+            break;
+        } 
+        else if (answer[num] > lionArrows[num])
+        {
+            canUpdate = false;
+            break;
+        }
+    }
+    
+    return canUpdate;
+}
+
+void Shoot(int num, int leftArrows)
+{
+    if (num < 0)
+    {
+        int scoreDiff = GetScoreDiff();
+        
+        if (maxScoreDiff < scoreDiff)
+        {
+            maxScoreDiff = scoreDiff;
+            answer = lionArrows;
+        }
+        else if (maxScoreDiff == scoreDiff)
+        {
+            bool canUpdate = CanUpdateAnswer();
+            
+            if (canUpdate)
+                answer = lionArrows;
+        }
+        
+        return;
+    }
+    
+    if (num == 0)
+    {
+        if (leftArrows > 0)
+        {
+            lionArrows[num] = leftArrows;
+            Shoot(num - 1, 0);
+            lionArrows[num] = 0;
+        }
+        else
+            Shoot(num - 1, 0);
+    }
+    
+    if (apeachArrows[num] < leftArrows)
+    {
+        lionArrows[num] = apeachArrows[num] + 1;
+        Shoot(num - 1, leftArrows - lionArrows[num]);
+        lionArrows[num] = 0;
+    }
+    
+    Shoot(num - 1, leftArrows);
+}
+
+vector<int> solution(int n, vector<int> info) {    
+    reverse(info.begin(), info.end());
+    apeachArrows = info;
+    
+    for (int num = 0; num <= 10; ++num)
+        lionArrows.push_back(0);
+    
+    Shoot(10, n);
+        
+    if (maxScoreDiff <= 0)
+        return { -1 };
+    
+    reverse(answer.begin(), answer.end());
+    
+    return answer;
+}
+
+
+
+
+
+
+
+
+
+
+/*
+
+#include <string>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
 #define MAX 11
 
 int maxScoreDiff = -1;		// 라이언과 어피치의 가장 큰 점수 차이
@@ -132,3 +256,6 @@ vector<int> solution(int n, vector<int> info)
     
 	return answer;
 }
+
+
+*/
