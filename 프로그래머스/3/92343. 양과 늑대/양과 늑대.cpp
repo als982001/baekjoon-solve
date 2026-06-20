@@ -2,6 +2,114 @@
 #include <vector>
 #include <queue>
 #include <iostream>
+#define MAX 20
+
+using namespace std;
+
+struct Info 
+{
+    int sheep; // 양 수
+    int wolf; // 늑대 수
+    int nodeHistory; // 지금까지 간 노드 정보
+    
+    Info (int _sheep, int _wolf, int _nodeHistory): wolf(_wolf), sheep(_sheep), nodeHistory(_nodeHistory) {};
+};
+
+int lastNode;
+vector<int> linkedNodes[MAX];
+
+int UpdateNodeHistory(int nodeHistory, int node)
+{
+    return (nodeHistory | (1 << node));
+}
+
+bool Visited(int nodeHistory, int node)
+{
+    return (nodeHistory & (1 << node)) != 0;
+}
+
+int solution(vector<int> sheepWolfInfo, vector<vector<int>> edges) 
+{
+    int answer = 0;
+    
+    lastNode = sheepWolfInfo.size() - 1;
+    
+    for (vector<int> edge : edges)
+    {
+        linkedNodes[edge[0]].push_back(edge[1]);
+    }
+    
+    int initSheep = 1;  
+    int initWolf = 0;
+    int initNodeHistory = UpdateNodeHistory(0, 0);
+    
+    Info initInfo(initSheep, initWolf, initNodeHistory);
+    
+    queue<Info> q;
+    q.push(initInfo);
+    
+    while(!q.empty())
+    {
+        Info curInfo = q.front();
+        q.pop();
+        
+        int curSheep = curInfo.sheep;
+        int curWolf = curInfo.wolf;
+        int curNodeHistory = curInfo.nodeHistory;
+        
+        if (answer < curSheep)
+            answer = curSheep;
+        
+        for (int node = 0; node <= lastNode; ++node)
+        {
+            if (Visited(curNodeHistory, node) == true)
+            {
+                int visitedNode = node;
+                
+                for (int nxtNode : linkedNodes[visitedNode])
+                {
+                    if (Visited(curNodeHistory, nxtNode))
+                        continue;
+                    
+                    int nxtSheep = curSheep;
+                    int nxtWolf = curWolf;
+                    
+                    if (sheepWolfInfo[nxtNode] == 0)
+                        ++nxtSheep;
+                    else
+                        ++nxtWolf;
+                    
+                    if (nxtSheep > nxtWolf)
+                    {
+                        int nxtNodeHistory = curNodeHistory;
+                        nxtNodeHistory = UpdateNodeHistory(nxtNodeHistory, nxtNode);
+                        
+                        Info nxtInfo(nxtSheep, nxtWolf, nxtNodeHistory);
+                        q.push(nxtInfo);
+                    }
+                }
+            }
+        }
+    }
+   
+    return answer;
+}
+
+
+
+
+
+
+
+
+
+
+/*
+
+#include <string>
+#include <vector>
+#include <queue>
+#include <iostream>
 
 #define MAX 20
 
@@ -98,189 +206,4 @@ int solution(vector<int> info, vector<vector<int>> edges) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-
-#include <string>
-#include <vector>
-#include <queue>
-#define MAX 20
-#define BIT_MAX 140001
-#define SHEEP 0
-#define WOLF 1
-
-using namespace std;
-
-typedef struct INFO
-{
-    int wolf;
-    int sheep;
-    int passedNodes;
-    
-    INFO(int _sheep, int _wolf, int _passedNodes): sheep(_sheep), wolf(_wolf), passedNodes(_passedNodes) {}
-} Info;
-
-int nodesNum;
-bool visited[MAX];
-vector<int> links[MAX];
-vector<int> sheepOrWolf;
-
-int solution(vector<int> info, vector<vector<int>> edges) {
-    int answer = 1;
-    
-    sheepOrWolf = info;
-    nodesNum = sheepOrWolf.size();
-    
-    for (int i = 0; i < edges.size(); ++i)
-    {   
-        int parentNode = edges[i][0];
-        int childNode = edges[i][1];
-        
-        links[parentNode].push_back(childNode);
-    }
-    
-    Info startNode(1, 0, (1 << 0));
-    
-    queue<Info> q;
-    q.push(startNode);
-    
-    while(!q.empty())
-    {
-        Info current = q.front();
-        q.pop();
-        
-        for (int node = 0; node < nodesNum; ++node)
-        {
-            if (current.passedNodes & (1 << node))
-            {
-                int currentNode = node;
-                
-                for (int i = 0; i < links[currentNode].size(); ++i)
-                {
-                    int nextNode = links[currentNode][i];
-                    int nextPassedNodes = current.passedNodes | (1 << nextNode);
-                        
-                    if (visited[nextPassedNodes])
-                        continue;
-                    
-                    if (sheepOrWolf[nextNode] == SHEEP)
-                    {
-                        visited[nextPassedNodes] = true;
-                        Info nextInfo(current.sheep + 1, current.wolf, nextPassedNodes);
-                        
-                        if (answer  < nextInfo.sheep)
-                            answer = nextInfo.sheep;
-                        
-                        q.push(nextInfo);
-                    }
-                    else if (current.sheep > current.wolf + 1)
-                    {
-                        visited[nextPassedNodes] = true;
-                        Info nextInfo(current.sheep, current.wolf + 1, nextPassedNodes);
-                        
-                        q.push(nextInfo);
-                    }
-                }
-            }
-        }
-    }
-    
-    return answer;
-}
 */
-/*
-#include <string>
-#include <vector>
-#include <algorithm>
-#include <queue>
-using namespace std;
-
-#define MAX 140000
-
-typedef struct NODE {
-	int sheep;
-	int wolf;
-	int route;
-
-	NODE(int _sheep, int _wolf, int _route) : sheep(_sheep), wolf(_wolf), route(_route) {}
-}Node;
-
-bool check[MAX];
-vector<int> links[20];
-
-int solution(vector<int> info, vector<vector<int>> edges)
-{
-	int answer = 1;
-	int nodeNum = info.size();
-	
-	for (int i = 0; i < edges.size(); ++i)
-	{
-		vector<int> edge = edges[i];
-
-		int from = edge[0];
-		int to = edge[1];
-
-		links[from].push_back(to);
-	}
-
-	queue<Node> q;
-	Node start(1, 0, (1 << 0));
-	q.push(start);
-
-	while (!q.empty())
-	{
-		Node node = q.front();
-		q.pop();
-
-		for (int idx = 0; idx < nodeNum; ++idx)
-		{
-			if (node.route & (1 << idx))
-			{
-				int cur = idx;
-				
-				for (int i = 0; i < links[cur].size(); ++i)
-				{
-					int nxt = links[cur][i];
-					int nxtRoute = node.route | (1 << nxt);
-
-					if (check[nxtRoute])
-						continue;
-
-					if (info[nxt] == 0)
-					{
-						Node nxtNode(node.sheep + 1, node.wolf, nxtRoute);
-						check[nxtRoute] = true;
-                        
-						if (answer < nxtNode.sheep)
-							answer = nxtNode.sheep;
-						
-						q.push(nxtNode);
-					}
-					else if (node.sheep > node.wolf + 1)
-					{
-                        Node nxtNode(node.sheep, node.wolf + 1, nxtRoute);
-						check[nxtRoute] = true;
-						q.push(nxtNode);
-					}
-				}
-			}
-		}
-	}
-
-	return answer;
-}
-
-*/
-
