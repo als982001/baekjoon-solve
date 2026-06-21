@@ -1,5 +1,113 @@
 #include <string>
 #include <vector>
+#define MAX 7
+
+using namespace std;
+
+struct Loc 
+{
+    int r;
+    int c;
+    Loc (int _r, int _c): r(_r), c(_c) {};
+};
+
+int R;
+int C;
+int board[MAX][MAX];
+int dir[4][2] = { { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 } };
+
+bool IsIn(int r, int c)
+{
+    return 0 <= r && r < R && 0 <= c && c < C;
+}
+
+pair<bool, int> Check(Loc curPlayer, Loc nxtPlayer)
+{
+    if (board[curPlayer.r][curPlayer.c] == 0)
+        return { false, 0 };
+    
+    bool canGo = false;
+    bool canWin = false;
+    int minTurn = 9999;
+    int maxTurn = 0;
+    
+    for (int i = 0; i < 4; ++i)
+    {
+        Loc curPlayerNxt(curPlayer.r + dir[i][0], curPlayer.c + dir[i][1]);
+        
+        if (IsIn(curPlayerNxt.r, curPlayerNxt.c) && board[curPlayerNxt.r][curPlayerNxt.c] == 1)
+        {
+            canGo = true;
+            
+            board[curPlayer.r][curPlayer.c] = 0;
+            
+            // 상대 플레이어 턴 기준의 결과
+            pair<bool, int> result = Check(nxtPlayer, curPlayerNxt);
+            
+            // 상대 플레이어가 졌다면 현재 플레이어가 이긴 케이스
+            if (result.first == false)
+            {
+                canWin = true;
+                minTurn = min(minTurn, result.second + 1);
+            }
+            else // 상대 플레이어가 이겼다면 현재 플레이어가 진 케이스
+                maxTurn = max(maxTurn, result.second + 1);
+            
+            board[curPlayer.r][curPlayer.c] = 1;
+        }
+    }
+    
+    // 갈 수 있는 곳이 없다면 패배 + 진행 못해서 0턴
+    if (canGo == false)
+        return { false, 0 };
+     
+    if (canWin)
+        return { true, minTurn };
+    else
+        return { false, maxTurn };
+}
+
+int solution(vector<vector<int>> initBoard, vector<int> aloc, vector<int> bloc) 
+{    
+    for (int r = 0; r < MAX; ++r)
+    {
+        for (int c = 0; c < MAX; ++c)
+            board[r][c] = 0;
+    }
+    
+    R = initBoard.size();
+    C = initBoard[0].size();
+    
+    for (int r = 0; r < initBoard.size(); ++r)
+    {
+        for (int c = 0; c < initBoard[r].size(); ++c)
+            board[r][c] = initBoard[r][c];
+    }
+    
+    Loc playerA(aloc[0], aloc[1]);
+    Loc playerB(bloc[0], bloc[1]);
+    
+    pair<bool, int> result = Check(playerA, playerB);
+    
+    return result.second;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+
+#include <string>
+#include <vector>
 
 #define MAX 7
 
@@ -92,3 +200,5 @@ int solution(vector<vector<int>> inputBoard, vector<int> aloc, vector<int> bloc)
     
     return result.second;
 }
+
+*/
