@@ -2,84 +2,164 @@
 #include <vector>
 #include <algorithm>
 #include <map>
-#include <memory.h>
+
 using namespace std;
 
-bool isChosen[11];
-map<string, int> record;
+map<string, int> records;
+vector<string> menusSet;
 
-void Check(string order, string choice, int num, int cnt, int startIdx)
+// 단품메뉴들을 course개만큼 전부 조합해서 기록
+void Record(string order, string menu, int startIdx, int course)
 {
-    if (num == cnt)
+    if (menu.size() == course)
     {
-        if (record[choice] > 0)
-            ++record[choice];
+        if (records[menu] == 0)
+        {
+            records[menu] = 1;
+            menusSet.push_back(menu);
+        }
         else
-            record[choice] = 1;
+            records[menu]++;
+        
         return;
     }
-
-    for (int i = startIdx; i < order.size(); ++i)
+    
+    for (int idx = startIdx; idx < order.size(); ++idx)
     {
-        if (!isChosen[i])
-        {
-            isChosen[i] = true;
-            choice.push_back(order[i]);
-
-            Check(order, choice, num, cnt + 1, i + 1);
-            
-            choice.pop_back();
-            isChosen[i] = false;
-        }
+        menu.push_back(order[idx]);
+        Record(order, menu, idx + 1, course);
+        menu.pop_back();
     }
 }
 
-vector<string> solution(vector<string> orders, vector<int> course) {
+vector<string> solution(vector<string> orders, vector<int> courses) {
     vector<string> answer;
+    
+    sort(orders.begin(), orders.end());
     
     for (int i = 0; i < orders.size(); ++i)
         sort(orders[i].begin(), orders[i].end());
     
-    for (int c = 0; c < course.size(); ++c)
+    for (int course : courses)
     {
-        int curCourse = course[c];
+        records.clear();
+        menusSet.clear();
         
-        record.clear();
-        memset(isChosen, false, sizeof(isChosen));
-
-        for (int i = 0; i < orders.size(); ++i)
+        for (string order : orders)
+            Record(order, "", 0, course);
+        
+        int maxRecordCount = -1;
+        
+        for (string menus : menusSet)
         {
-            string curOrder = orders[i];
-
-            if (curOrder.size() >= curCourse)
-                Check(curOrder, "", curCourse, 0, 0);
-        }
-
-        map<string, int>::iterator iter;
-
-        int maxNum = 0;
-        string maxOrder = "";
-
-        for (iter = record.begin(); iter != record.end(); ++iter)
-        {
-            int curNum = iter->second;
-
-            if (curNum > 1 && maxNum < curNum)
-                maxNum = curNum;
+            if (records[menus] > 1 && maxRecordCount < records[menus])
+                maxRecordCount = records[menus];
         }
         
-        for (iter = record.begin(); iter != record.end(); ++iter)
+        for (string menus : menusSet)
         {
-            int curNum = iter->second;
-
-            if (curNum == maxNum)
-                answer.push_back(iter->first);
+            if (maxRecordCount == records[menus])
+                answer.push_back(menus);
         }
-          
     }
-
+    
     sort(answer.begin(), answer.end());
-
+    
     return answer;
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <map>
+#include <iostream>
+
+using namespace std;
+
+map<string, int> record;
+vector<vector<char>> orders;
+vector<string> courseMenus;
+
+void Check(string order, string curMenus, int startIdx, int course)
+{
+    if (curMenus.size() == course)
+    {
+        if (record[curMenus] == 0)
+        {
+            record[curMenus] = 1;
+            courseMenus.push_back(curMenus);
+        }
+        else
+            ++record[curMenus];
+        
+        return;
+    }
+    
+    for (int idx = startIdx; idx < order.size(); ++idx)
+    {
+        curMenus.push_back(order[idx]);
+        Check(order, curMenus, idx + 1, course);
+        curMenus.pop_back();
+    }
+}
+
+vector<string> solution(vector<string> orders, vector<int> courses) {
+    vector<string> answer;
+    
+    sort(orders.begin(), orders.end());
+    
+    for (int i = 0; i < orders.size(); ++i)
+        sort(orders[i].begin(), orders[i].end());
+    
+    for (int course : courses)
+    {
+        record.clear();
+        courseMenus.clear();
+        
+        for (string order : orders)
+        {
+            Check(order, "", 0, course);
+        }
+        
+        int maxCount = 0;
+        vector<string> maxCountCourseMenus;
+        
+        for (string courseMenu : courseMenus)
+        {
+            if (record[courseMenu] > 1 && maxCount < record[courseMenu])
+                maxCount = record[courseMenu];
+        }
+        
+        if (maxCount == 0)
+            continue;
+        
+        for (string courseMenu : courseMenus)
+        {
+            if (maxCount == record[courseMenu])
+                maxCountCourseMenus.push_back(courseMenu);
+        }
+        
+        for (auto maxCountCourseMenu : maxCountCourseMenus)
+            answer.push_back(maxCountCourseMenu);
+    }
+    
+    sort(answer.begin(), answer.end());
+    
+    return answer;
+}
+
+*/
