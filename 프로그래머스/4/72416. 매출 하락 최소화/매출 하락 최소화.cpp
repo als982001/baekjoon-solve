@@ -2,6 +2,96 @@
 #include <vector>
 
 #define MAX 300002
+#define INF 987654321 
+
+using namespace std;
+
+int saleValue[MAX]; // sales 인덱스를 일일이 idx + 1하기 귀찮아서 복사하기 위한 배열
+int dp[MAX][2]; // dp[x][0]: x번 노드가 참석했을 때 최솟값, dp[x][1]: x번 노드가 불참했을 때 최솟값
+vector<int> linkedNodes[MAX];
+
+void Check(int node)
+{ 
+    dp[node][0] = saleValue[node];
+    dp[node][1] = 0;
+    
+    if (linkedNodes[node].size() == 0)
+        return;
+    
+    bool childAttend = false;
+    int costSum = 0;
+    
+    int minChildAttendCost = INF; // 자식 노드가 하나도 참석하지 않는 경우, 꼭 하나 참가시킬 때의 비용
+    
+    for (int linkedNode : linkedNodes[node])
+    {
+        Check(linkedNode);
+        
+        int minLinkedNodeCost = min(dp[linkedNode][0], dp[linkedNode][1]);
+        costSum += minLinkedNodeCost;
+        
+        // 자식 노드 참석 비용 < 불참 비용인 경우, 참석 시켜버림
+        if (dp[linkedNode][0] < dp[linkedNode][1])
+        {
+            childAttend = true;
+        }
+        else
+        {
+            minChildAttendCost = min(minChildAttendCost, dp[linkedNode][0] - dp[linkedNode][1]);
+        }
+    }
+    
+    // 현재 노드 참석 시에는 신경쓸 거 없음
+    dp[node][0] += costSum;
+    
+    // 현재 노드가 참석하지 않은 경우는 자식 노드를 참석시켰을 때를 고려해야 함
+    if (childAttend)
+    {
+        // 자식이 참여하는 경우
+        dp[node][1] = costSum;
+    }
+    else
+    {
+        // 자식이 참여하지 않는 경우
+        dp[node][1] = costSum + minChildAttendCost;
+    }
+}
+
+int solution(vector<int> sales, vector<vector<int>> links) 
+{    
+    for (int idx = 0; idx < sales.size(); ++idx)
+        saleValue[idx + 1] = sales[idx];
+    
+    for (vector<int> link : links)
+    {
+        int a = link[0];
+        int b = link[1];
+        
+        linkedNodes[a].push_back(b);
+    }
+    
+    Check(1);
+    
+    return min(dp[1][0], dp[1][1]);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+
+#include <string>
+#include <vector>
+
+#define MAX 300002
 #define INF 987654321
 
 using namespace std;
@@ -78,3 +168,5 @@ int solution(vector<int> _sales, vector<vector<int>> links) {
     
     return min(dp[1][0], dp[1][1]);
 }
+
+*/
