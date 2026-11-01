@@ -2,57 +2,58 @@
 #include <vector>
 #include <queue>
 
+#include <iostream>
+
 using namespace std;
+
+struct Process {
+    int priority;
+    int idx;
+    
+    Process(int priority, int idx)
+    {
+        this->priority = priority;
+        this->idx = idx;
+    }
+};
 
 int solution(vector<int> priorities, int location) {
     int answer = 0;
     
-    int leftProcesses[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int targetPriority = priorities[location];
+    int maxPriority = -1;
     
-    queue<pair<int, int>> q;
+    queue<Process> processes;
+    priority_queue<int> prs;
     
-    for (int i = 0; i < priorities.size(); ++i)
+    for (int idx = 0; idx < priorities.size(); ++idx)
     {
-        int priority = priorities[i];
+        int priority = priorities[idx];
         
-        ++leftProcesses[priority];
+        prs.push(priority);
         
-        q.push({ priority, i });
+        Process process(priority, idx);
+        
+        processes.push(process);
     }
     
-    while(!q.empty())
+    while(!processes.empty())
     {
-        pair<int, int> process = q.front();
-        q.pop();
+        Process process = processes.front();
+        processes.pop();
         
-        bool canExecute = true;
-        
-        for (int i = process.first + 1; i <= 9; ++i)
-        {
-            if (leftProcesses[i] > 0)
-            {
-                canExecute = false;
-                break;
-            }
-        }
-        
-        if (canExecute)
+        if (process.priority >= prs.top())
         {
             ++answer;
-            --leftProcesses[process.first];
             
-            if (process.second == location)
+            prs.pop();
+            
+            if (process.idx == location)
                 break;
         }
         else
-            q.push(process);
-            
+            processes.push(process);
     }
-    
-    
-    
-    
+
     
     return answer;
 }
