@@ -1,157 +1,67 @@
 #include <string>
 #include <vector>
-#include <map>
 #include <queue>
 
-#define MAX 51
+#define INF 987654321
 
 using namespace std;
 
-int checked[MAX];
+int visited[51];
 
-bool CanChange(string from, string to)
+bool CanChange(string a, string b)
 {
-    bool hasDiffLetter = false;
-    bool canChange = true;
+    int diffCnt = 0;
     
-    if (from == to)
-        return false;
-        
-    for (int i = 0; i < to.size(); ++i)
+    for (int idx = 0; idx < a.size(); ++idx)
     {
-        char fromLetter = from[i];
-        int toLetter = to[i];
-        
-        if (fromLetter != toLetter)
+        if (a[idx] != b[idx])
         {
-            if (hasDiffLetter)
-            {
-                canChange = false;
+            diffCnt++;
+            
+            if (diffCnt > 1)
                 break;
-            }
-
-            hasDiffLetter = true;
         }
     }
     
-    return canChange;
+    return diffCnt == 1;
 }
 
 int solution(string begin, string target, vector<string> words) {
-    int answer = 0;
+    int answer = INF;
     
-    for (int i = 0; i < MAX; ++i)
-        checked[i] = MAX * MAX;
+    for (int idx = 0; idx < words.size(); ++idx)
+        visited[idx] = INF;
     
-    queue<pair<string, int>> q;
-    
-    q.push({ begin, 0 });
-    
-    while(!q.empty())
-    {
-        string curWord = q.front().first;
-        int times = q.front().second;
-        
-        q.pop();
-        
-        int nxtTimes = times + 1;
-        
-        if (curWord == target)
-        {
-            answer = times;
-            break;
-        }
-        
-        for (int i = 0; i < words.size(); ++i)
-        {
-            string word = words[i];
-            
-            if (CanChange(curWord, word) && checked[i] > nxtTimes)
-            {
-                checked[i] = nxtTimes;
-                q.push({ word, nxtTimes });
-            }
-        }
-    }
-    
-    
-    return answer;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-
-#include <string>
-#include <vector>
-#include <queue>
-#define MAX 12
-using namespace std;
-
-bool checked[MAX];
-
-
-bool CanChange(string from, string to)
-{
-    int diffNum = 1;
-    
-    for (int i = 0; i < from.size(); ++i)
-    {
-        if (from[i] != to[i])
-        {
-            if (--diffNum < 0)
-                return false;
-        }
-    }
-    
-    return true;
-}
-
-int solution(string begin, string target, vector<string> words) {
-    int answer = 0;
-
     queue<pair<string, int>> q;
     q.push({ begin, 0 });
     
     while(!q.empty())
     {
-        string curWord = q.front().first;
-        int changeTime = q.front().second;
+        string word = q.front().first;
+        int t = q.front().second;
+        
         q.pop();
         
-        if (curWord == target)
+        if (word == target && answer > t)
         {
-            answer = changeTime;
+            answer = t;
             break;
         }
         
-        for (int i = 0; i < words.size(); ++i)
+        for (int idx = 0; idx < words.size(); ++idx)
         {
-            string nxtWord = words[i];
+            string nxtWord = words[idx];
             
-            if (checked[i] == false && CanChange(curWord, nxtWord) == true)
+            if (CanChange(word, nxtWord) && visited[idx] > t + 1)
             {
-                checked[i] = true;
-                q.push({ nxtWord, changeTime + 1 });
+                visited[idx] = t + 1;
+                q.push({ nxtWord, t + 1 });
             }
         }
     }
     
+    if (answer == INF)
+        return 0;
+    
     return answer;
 }
-
-*/
