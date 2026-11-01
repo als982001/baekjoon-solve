@@ -1,8 +1,10 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <iostream>
 
 using namespace std;
+
 
 bool Compare(int a, int b)
 {
@@ -11,26 +13,29 @@ bool Compare(int a, int b)
 
 int solution(vector<int> citations) {
     int answer = 0;
-    
+        
     sort(citations.begin(), citations.end(), Compare);
+    
+    int lastIdx = citations.size() - 1;
+    
+    // 6 5 3 1 0
     
     for (int h = citations[0]; h >= 0; --h)
     {
-        int idx = 0;
+        int idx = 0; 
         
-        while(idx < citations.size() && h <= citations[idx])
+        while(idx <= lastIdx && citations[idx] >= h)
             ++idx;
         
-        int citeCount = idx;
+        int h이상 = idx;
         
-        if (citeCount >= h && citations[idx] <= h)
+        if (h이상 >= h && citations[idx] <= h)
         {
-            answer = h;
-            break;
+            if (answer < h)
+                answer = h;
         }
-        
-        
     }
+    
     
     return answer;
 }
