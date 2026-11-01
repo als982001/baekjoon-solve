@@ -1,21 +1,25 @@
 #include <string>
 #include <vector>
+#include <iostream>
 
 using namespace std;
 
-struct Trie {
+struct Trie
+{
     bool finish;
     Trie* node[10];
     
-    Trie() {
+    Trie()
+    {
         this->finish = false;
         
-        for (int i = 0; i < 10; ++i)
-            this->node[i] = NULL;
+        for (int num = 0; num < 10; ++num)
+            this->node[num] = NULL;
     }
     
     void Insert(string str, int idx);
     bool IsPrefix(string str, int idx);
+    bool Search(string str, int idx);
 };
 
 void Trie::Insert(string str, int idx)
@@ -38,25 +42,46 @@ bool Trie::IsPrefix(string str, int idx)
 {
     if (idx >= str.size())
     {
-        for (int i = 0; i < 10; ++i)
+        bool isPrefix = false;
+        
+        for (int num = 0; num < 10; ++num)
         {
-            if (this->node[i] != NULL)
-                return true;
+            if (this->node[num] != NULL)
+            {
+                isPrefix = true;
+                break;
+            }
         }
         
-        return false;
+        return isPrefix;
     }
     
     int num = str[idx] - '0';
     
+    if (this->node[num] == NULL)
+        return false;
+    
     return this->node[num]->IsPrefix(str, idx + 1);
+}
+
+bool Trie::Search(string str, int idx)
+{
+    if (idx >= str.size())
+        return this->finish;
+    
+    int num = str[idx] - '0';
+    
+    if (this->node[num] == NULL)
+        return false;
+    
+    return this->node[num]->Search(str, idx + 1);
 }
 
 bool solution(vector<string> phone_book) {
     bool answer = true;
-
+    
     Trie* trie = new Trie();
-
+    
     for (string phone : phone_book)
         trie->Insert(phone, 0);
     
@@ -69,6 +94,13 @@ bool solution(vector<string> phone_book) {
             answer = false;
             break;
         }
+    }
+    
+    for (string phone : phone_book)
+    {        
+        bool searched = trie->Search(phone, 0);
+        
+        // cout << phone << " => " << (searched ? "찾음" : "못 찾음") << endl;
     }
     
     return answer;
