@@ -6,7 +6,7 @@ using namespace std;
 vector<int> solution(int brown, int yellow) {
     vector<int> answer;
     
-    for (int width = yellow; width >= 1; --width)
+    for (int width = yellow; 1LL * width * width >= yellow; --width)
     {
         if (yellow % width > 0)
             continue;
