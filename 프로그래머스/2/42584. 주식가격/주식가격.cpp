@@ -25,33 +25,30 @@ vector<int> solution(vector<int> prices) {
     for (; idx < prices.size(); ++idx)
     {
         PriceInfo priceInfo(prices[idx], idx);
-        
-        if (stk.empty())
-            stk.push(priceInfo);
-        else
+
+        if (!stk.empty())
         {
-            if (stk.top().price <= priceInfo.price)
-                stk.push(priceInfo);
-            else
+            if (stk.top().price > priceInfo.price)
             {
                 while(!stk.empty())
                 {
                     PriceInfo prevPriceInfo = stk.top();
                                     
-                    if (prevPriceInfo.price <= priceInfo.price)
-                        break;
-                    else
+                    // 현재 가격이 이전 가격에 비해 떨어진 경우
+                    if (prevPriceInfo.price > priceInfo.price)
                     {
-                        int dur = idx - prevPriceInfo.idx;
+                        int dur = idx - prevPriceInfo.idx; // 지속 기간
                         answer[prevPriceInfo.idx] = dur;
                         
                         stk.pop();
                     }
+                    else
+                        break;
                 }
-                
-                stk.push(priceInfo);
             }
         }
+        
+        stk.push(priceInfo);
     }
     
     while(!stk.empty())
@@ -64,65 +61,3 @@ vector<int> solution(vector<int> prices) {
     
     return answer;
 }
-
-
-
-
-
-
-
-
-
-
-
-/*
-
-#include <string>
-#include <vector>
-
-using namespace std;
-
-vector<int> solution(vector<int> prices) {
-    vector<int> answer(prices.size(), 0);
-    
-    vector<pair<int, int>> stk;
-    
-    int idx = 0;
-    
-    for (; idx < prices.size(); ++idx)
-    {
-        int price = prices[idx];
-        
-        if (stk.empty())
-            stk.push_back({ price, idx });
-        else
-        {
-            int prevPrice = stk.back().first;
-            
-            if (prevPrice < price)
-                stk.push_back({ price, idx });
-            else
-            {
-                while(stk.empty() == false)
-                {
-                    auto [prevPrice, prevPriceIdx] = stk.back();
-                    
-                    if (prevPrice <= price)
-                        break;
-                    
-                    answer[prevPriceIdx] = idx - prevPriceIdx;
-                    stk.pop_back();
-                }
-                
-                stk.push_back({ price, idx });
-            }
-        }
-    }
-    
-    for (auto [price, priceIdx] : stk)
-        answer[priceIdx] = idx - priceIdx - 1;
-    
-    return answer;
-}
-
-*/
