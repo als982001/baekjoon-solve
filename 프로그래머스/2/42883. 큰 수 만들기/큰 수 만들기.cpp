@@ -1,41 +1,33 @@
 #include <string>
 #include <vector>
+#include <iostream>
 
 using namespace std;
 
-string solution(string number, int k) {
-    string answer = "";
+string solution(string number, int k) 
+{
+    string answer;
     
-    vector<char> stk;
+    int removeCount = k;
     
-    for (int i = 0; i < number.size(); ++i)
+    for (int idx = 0; idx < number.size(); ++idx)
     {
-        char num = number[i];
+        char digit = number[idx];
         
-        while(!stk.empty() && k > 0)
+        while(answer.size() > 0 && removeCount > 0 && digit > answer.back())
         {
-            if (stk.back() < num)
-            {
-                stk.pop_back();
-                --k;
-            }
-            else
-                break;
+            answer.pop_back();
+            --removeCount;
         }
         
-        stk.push_back(num);
+        answer.push_back(digit);
     }
     
-    for (char num : stk)
-        answer += num;
-    
-    while(k > 0)
+    while(removeCount > 0)
     {
+        --removeCount;
         answer.pop_back();
-        --k;
     }
-    
     
     return answer;
 }
-
