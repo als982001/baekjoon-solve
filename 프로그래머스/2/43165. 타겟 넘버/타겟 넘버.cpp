@@ -1,44 +1,50 @@
 #include <string>
 #include <vector>
 
+#define MAX 21
+
 using namespace std;
 
-int givenOperators[2] = { 1, -1 };
-int operators[21];
+int cnt = 0;
+int plusMinus[2] = { 1, -1 };
+int plusMinusRecord[MAX];
+vector<int> givenNumbers;
 
-void Check(vector<int>& numbers, int idx, int target, int& answer)
+void Check(int idx, int target)
 {
-    if (idx == numbers.size())
+    if (idx >= givenNumbers.size())
     {
         int sum = 0;
         
-        for (int i = 0; i < numbers.size(); ++i)
-            sum += (operators[i] * numbers[i]);
+        for (int g = 0; g < givenNumbers.size(); ++g)
+        {
+            int num = givenNumbers[g];
+            
+            sum += (num * plusMinusRecord[g]);
+        }
         
         if (sum == target)
-            ++answer;
+            ++cnt;
         
         return;
     }
     
-    for (int i = 0; i < 2; ++i)
+    for (int pmIdx = 0; pmIdx < 2; ++pmIdx)
     {
-        int curOperator = givenOperators[i];
-        
-        operators[idx] = curOperator;
-        Check(numbers, idx + 1, target, answer);
-        operators[idx] = 0;
+        plusMinusRecord[idx] = plusMinus[pmIdx];
+        Check(idx + 1, target);
+        plusMinusRecord[idx] = 0;
     }
 }
 
-
-int solution(vector<int> numbers, int target) {
-    int answer = 0;
+int solution(vector<int> numbers, int target) 
+{
     
-    for (int i = 0; i < 21; ++i)
-        operators[i] = 0;
+    for (int i = 0; i < numbers.size(); ++i)
+        plusMinusRecord[i] = 0;
+    givenNumbers = numbers;
     
-    Check(numbers, 0, target, answer);
+    Check(0, target);
     
-    return answer;
+    return cnt;
 }
