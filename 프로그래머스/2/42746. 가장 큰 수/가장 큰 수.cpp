@@ -1,7 +1,6 @@
 #include <string>
 #include <vector>
 #include <algorithm>
-
 #include <iostream>
 
 using namespace std;
@@ -11,33 +10,39 @@ bool Compare(int a, int b)
     string strA = to_string(a);
     string strB = to_string(b);
     
-    if (strA.size() == strB.size())
-        return strA > strB;
+    string resultA = strA + strB;
+    string resultB = strB + strA;
     
-    return (strA + strB) > (strB + strA);
+    return resultA > resultB;
 }
 
-string solution(vector<int> numbers) {
-    bool isAllZero = true;
-    for (int i = 0; i < numbers.size(); ++i)
+bool CheckAllZero(string str)
+{
+    bool allZero = true;
+    
+    for (int idx = 0; idx < str.size(); ++idx)
     {
-        if (numbers[i] != 0)
+        if (str[idx] != '0')
         {
-            isAllZero = false;
+            allZero = false;
             break;
         }
     }
     
-    if (isAllZero)
-        return "0";
-    
+    return allZero;
+}
+
+string solution(vector<int> numbers) {
     string answer = "";
     
     sort(numbers.begin(), numbers.end(), Compare);
     
     for (int number : numbers)
-        answer += (to_string(number));
+        answer += to_string(number);
     
+    // 에지케이스
+    if (CheckAllZero(answer))
+        return "0";
     
     return answer;
 }
