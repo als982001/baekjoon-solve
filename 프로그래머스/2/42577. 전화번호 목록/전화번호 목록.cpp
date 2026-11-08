@@ -1,17 +1,15 @@
 #include <string>
 #include <vector>
-#include <iostream>
 
 using namespace std;
 
-struct Trie
-{
-    bool finish;
+struct Trie {
+    bool isFinish;
     Trie* node[10];
     
-    Trie()
+    Trie() 
     {
-        this->finish = false;
+        this->isFinish = false;
         
         for (int num = 0; num < 10; ++num)
             this->node[num] = NULL;
@@ -26,7 +24,7 @@ void Trie::Insert(string str, int idx)
 {
     if (idx >= str.size())
     {
-        this->finish = true;
+        this->isFinish = true;
         return;
     }
     
@@ -35,7 +33,7 @@ void Trie::Insert(string str, int idx)
     if (this->node[num] == NULL)
         this->node[num] = new Trie();
     
-    this->node[num]->Insert(str, idx + 1);
+    return this->node[num]->Insert(str, idx + 1);
 }
 
 bool Trie::IsPrefix(string str, int idx)
@@ -67,7 +65,7 @@ bool Trie::IsPrefix(string str, int idx)
 bool Trie::Search(string str, int idx)
 {
     if (idx >= str.size())
-        return this->finish;
+        return this->isFinish;
     
     int num = str[idx] - '0';
     
@@ -76,6 +74,7 @@ bool Trie::Search(string str, int idx)
     
     return this->node[num]->Search(str, idx + 1);
 }
+
 
 bool solution(vector<string> phone_book) {
     bool answer = true;
@@ -94,13 +93,6 @@ bool solution(vector<string> phone_book) {
             answer = false;
             break;
         }
-    }
-    
-    for (string phone : phone_book)
-    {        
-        bool searched = trie->Search(phone, 0);
-        
-        // cout << phone << " => " << (searched ? "찾음" : "못 찾음") << endl;
     }
     
     return answer;
