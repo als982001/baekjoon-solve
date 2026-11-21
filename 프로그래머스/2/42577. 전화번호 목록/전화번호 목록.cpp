@@ -3,13 +3,14 @@
 
 using namespace std;
 
-struct Trie {
-    bool isFinish;
+struct Trie
+{
+    bool finish;
     Trie* node[10];
     
-    Trie() 
+    Trie()
     {
-        this->isFinish = false;
+        this->finish = false;
         
         for (int num = 0; num < 10; ++num)
             this->node[num] = NULL;
@@ -24,7 +25,7 @@ void Trie::Insert(string str, int idx)
 {
     if (idx >= str.size())
     {
-        this->isFinish = true;
+        this->finish = true;
         return;
     }
     
@@ -65,7 +66,7 @@ bool Trie::IsPrefix(string str, int idx)
 bool Trie::Search(string str, int idx)
 {
     if (idx >= str.size())
-        return this->isFinish;
+        return this->finish;
     
     int num = str[idx] - '0';
     
@@ -74,7 +75,6 @@ bool Trie::Search(string str, int idx)
     
     return this->node[num]->Search(str, idx + 1);
 }
-
 
 bool solution(vector<string> phone_book) {
     bool answer = true;
