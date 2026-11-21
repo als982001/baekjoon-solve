@@ -1,29 +1,26 @@
 #include <vector>
 #include <set>
-#include <algorithm>
-
-#include <iostream>
 
 using namespace std;
 
-int solution(vector<int> nums)
+int Min(int a, int b)
 {
-    int answer = 0;
-    
-    int numCount = 0;
-    set<int> record;
+    return a < b ? a : b;
+}
+
+int solution(vector<int> nums)
+{    
+    int cnt = 0;
+    set<int> s;
     
     for (int num : nums)
     {
-        if (record.find(num) == record.end())
+        if (s.count(num) == 0)
         {
-            record.insert(num);
-            ++numCount;
+            s.insert(num);
+            ++cnt;
         }
     }
-    
-    answer = min((int)(nums.size() / 2), numCount);
-    
-    
-    return answer;
+
+    return Min(cnt, nums.size() / 2);
 }
