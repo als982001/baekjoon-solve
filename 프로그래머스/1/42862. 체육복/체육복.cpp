@@ -1,42 +1,48 @@
 #include <string>
 #include <vector>
 
+#define MAX 31
+
 using namespace std;
 
 int solution(int n, vector<int> lost, vector<int> reserve) {
     int answer = 0;
     
-    vector<int> clothes(n + 2, 1);
+    int cloth[MAX];
+    
+    for (int idx = 1; idx <= n; ++idx)
+        cloth[idx] = 1;
     
     for (int l : lost)
-        clothes[l] = 0;
+        --cloth[l];
     
     for (int r : reserve)
-        ++clothes[r];
+        ++cloth[r];
     
-    for (int student = 1; student <= n; ++student)
+    for (int idx = 1; idx <= n; ++idx)
     {
-        if (clothes[student] > 0)
-            continue;
-        
-        int prevStudent = student - 1;
-        int nextStudent = student + 1;
-        
-        if (prevStudent >= 1 && clothes[prevStudent] > 1)
+        if (cloth[idx] == 0)
         {
-            --clothes[prevStudent];
-            ++clothes[student];
-        }
-        else if (nextStudent <= n && clothes[nextStudent] > 1)
-        {
-            --clothes[nextStudent];
-            ++clothes[student];
+            int befIdx = idx - 1;
+            int nxtIdx = idx + 1;
+            
+            if (befIdx >= 1 && cloth[befIdx] > 1)
+            {
+                ++cloth[idx];
+                --cloth[befIdx];
+            }
+            else if (nxtIdx <= n && cloth[nxtIdx] > 1)
+            {
+                ++cloth[idx];
+                --cloth[nxtIdx];
+                
+            }
         }
     }
     
-    for (int student = 1; student <= n; ++student)
+    for (int idx = 1; idx <= n; ++idx)
     {
-        if (clothes[student] > 0)
+        if (cloth[idx] > 0)
             ++answer;
     }
     
