@@ -7,27 +7,26 @@ using namespace std;
 string solution(vector<string> participant, vector<string> completion) {
     string answer = "";
     
-    map<string, int> completionNames;
+    map<string, int> completionMap;
     
-    for (string person : completion)
+    for (string c : completion)
     {
-        if (completionNames[person] == 0)
-            completionNames[person] = 1;
+        if (completionMap[c] == 0)
+            completionMap[c] = 1;
         else
-            ++completionNames[person];
+            ++completionMap[c];
     }
     
-    for (string person : participant)
+    for (string p : participant)
     {
-        if (completionNames[person] > 0)
-            --completionNames[person];
-        else
+        if (completionMap[p] == 0)
         {
-            answer = person;
+            answer = p;
             break;
         }
+        
+        --completionMap[p];
     }
-    
     
     return answer;
 }
