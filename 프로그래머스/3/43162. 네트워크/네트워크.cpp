@@ -5,47 +5,41 @@
 
 using namespace std;
 
-int lastNode;
-bool visited[MAX];
+bool visited [MAX];
 vector<int> linkedNodes[MAX];
 
-void Check(int node)
+void Visit(int node)
 {
-    if (visited[node] == true)
+    if (visited[node])
         return;
     
     visited[node] = true;
     
-    for (int linkedNode : linkedNodes[node])
-    {
-        if (visited[linkedNode] == false)
-            Check(linkedNode);
-    }
+    for (int nxtNode : linkedNodes[node])
+        Visit(nxtNode);
 }
 
 int solution(int n, vector<vector<int>> computers) {
     int answer = 0;
     
-    lastNode = n - 1;
-    
-    for (int node = 0; node <= lastNode; ++node)
+    for (int node = 0; node < n; ++node)
         visited[node] = false;
     
-    for (int node = 0; node < computers.size(); ++node)
+    for (int a = 0; a < computers.size(); ++a)
     {
-        for (int idx = 0; idx < computers[node].size(); ++idx)
+        for (int b = 0; b < computers[a].size(); ++b)
         {
-            if (computers[node][idx] == 1)
-                linkedNodes[node].push_back(idx);
+            if (computers[a][b] == 1)
+                linkedNodes[a].push_back(b);
         }
     }
     
-    for (int node = 0; node <= lastNode; ++node)
+    for (int node = 0; node < n; ++node)
     {
         if (visited[node] == false)
-        {            
+        {
+            Visit(node);
             ++answer;
-            Check(node);
         }
     }
     
