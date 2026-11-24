@@ -19,45 +19,41 @@ struct PriceInfo
 vector<int> solution(vector<int> prices) {
     vector<int> answer(prices.size(), 0);
     
-    int idx = 0;
     stack<PriceInfo> stk;
     
-    for (; idx < prices.size(); ++idx)
+    int curIdx = 0;
+    
+    for (; curIdx < prices.size(); ++curIdx)
     {
-        PriceInfo priceInfo(prices[idx], idx);
-
-        if (!stk.empty())
+        int curPrice = prices[curIdx];
+        
+        if (stk.empty() == false)
         {
-            if (stk.top().price > priceInfo.price)
+            while(!stk.empty() && stk.top().price > curPrice)
             {
-                while(!stk.empty())
-                {
-                    PriceInfo prevPriceInfo = stk.top();
-                                    
-                    // 현재 가격이 이전 가격에 비해 떨어진 경우
-                    if (prevPriceInfo.price > priceInfo.price)
-                    {
-                        int dur = idx - prevPriceInfo.idx; // 지속 기간
-                        answer[prevPriceInfo.idx] = dur;
-                        
-                        stk.pop();
-                    }
-                    else
-                        break;
-                }
+                PriceInfo befPriceInfo = stk.top();
+                stk.pop();
+                
+                int dur = curIdx - befPriceInfo.idx;
+                
+                answer[befPriceInfo.idx] = dur;
             }
         }
         
-        stk.push(priceInfo);
+        PriceInfo curPriceInfo(curPrice, curIdx);
+        stk.push(curPriceInfo);    
     }
     
-    while(!stk.empty())
+    while(stk.empty() == false)
     {
-        PriceInfo prevPriceInfo = stk.top();
+        PriceInfo befPriceInfo = stk.top();
         stk.pop();
         
-        answer[prevPriceInfo.idx] = prices.size() - prevPriceInfo.idx - 1;
+        int dur = curIdx - befPriceInfo.idx - 1;
+        
+        answer[befPriceInfo.idx] = dur;
     }
+    
     
     return answer;
 }
